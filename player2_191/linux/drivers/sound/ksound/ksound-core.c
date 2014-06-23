@@ -2254,7 +2254,9 @@ int ksnd_hctl_elem_write(snd_kcontrol_t *elem, snd_ctl_elem_value_t *control)
 
 static int __init ksnd_module_init(void)
 {
+#ifdef VERY_VERBOSE
     printk(KERN_DEBUG "ksound: Built %s %s\n", __DATE__, __TIME__);
+#endif
     return 0;
 }
 
