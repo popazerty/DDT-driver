@@ -134,7 +134,7 @@ unsigned long tsm_io = 0;
 void* tsm_io = NULL;
 #endif
 
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(SAGEMCOM88)
 extern int TsinMode;
 enum
 {
@@ -195,8 +195,8 @@ struct stm_dma_req_config fdma_req_config =
 static const char *fdmac_id[]    = { STM_DMAC_ID, NULL };
 static const char *fdma_cap_hb[] = { STM_DMA_CAP_HIGH_BW, NULL };
 
-#if defined(ADB_BOX)
-//wstrzykiwanie streamu do SWTS z sterownika DVB-T * injecting a stream of SWTS dvbt driver
+#if defined(ADB_BOX) || defined(SAGEMCOM88)
+//injecting stream from DVB-T USB driver to SWTS
 void extern_inject_data(u32 *data, off_t size)
 {
     int blocks = (size + 127) / 128;
@@ -1578,7 +1578,11 @@ void stm_tsm_init(int use_cimax)
             int chan = STM_GET_CHANNEL(options);// / STM_TSM_CHANNEL_1) & 0xf;
 #endif // alt
             int chan = n;
+#if defined(SAGEMCOM88)
+    		int options = (n * 0x10000) + STM_SERIAL_NOT_PARALLEL;
+#else
             int options = n * 0x10000;
+#endif // alt
 
             writel(readl(tsm_io + TSM_DESTINATION(0)) | (1 << chan), tsm_io + TSM_DESTINATION(0));
 
@@ -1609,7 +1613,15 @@ void stm_tsm_init(int use_cimax)
                        tsm_io + TSM_STREAM_CONF(chan));
             }
 
-#else // !defined(ADB_BOX)
+#elif defined(SAGEMCOM88)
+    		writel( (readl(tsm_io + TSM_STREAM_CONF(chan)) & TSM_RAM_ALLOC_START(0xff)) |
+       			(options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0 ) |
+       			(options & STM_INVERT_CLOCK        ? TSM_INVERT_BYTECLK : 0 ) |
+       			(options & STM_PACKET_CLOCK_VALID  ? TSM_SYNC_NOT_ASYNC : 0 ) |
+       			TSM_ALIGN_BYTE_SOP |
+       			TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES ,
+       			tsm_io + TSM_STREAM_CONF(chan));
+#else // !defined(ADB_BOX) && !defined(SAGEMCOM88)
             printk("TsinMode = Parallel *st-merger*\n\t");
 
             writel((readl(tsm_io + TSM_STREAM_CONF(chan)) & TSM_RAM_ALLOC_START(0xff)) |

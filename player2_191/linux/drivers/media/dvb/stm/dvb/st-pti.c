@@ -119,15 +119,14 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
        if playback via SWTS is activated. Otherwise playback would
        unnecessarily waste a buffer (might lead to loss of a second
        recording). */
-#if !defined(ADB_BOX)
+#if !defined(ADB_BOX) && !defined(SAGEMCOM88)
 
     if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
             (pSession->source <= DMX_SOURCE_FRONT2)) ||
             ((pSession->source == DMX_SOURCE_DVR0) && swts)))
         return -1;
 
-#endif
-#if defined(ADB_BOX)
+#else
 
     if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
             (pSession->source < DMX_SOURCE_FRONT3)) ||
@@ -336,15 +335,14 @@ int stpti_stop_feed(struct dvb_demux_feed *dvbdmxfeed,
 
     /* PTI was only started if the source is one of two frontends or
        if playback via SWTS was activated. */
-#if !defined(ADB_BOX)
+#if !defined(ADB_BOX) && !defined(SAGEMCOM88)
 
     if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
             (pSession->source <= DMX_SOURCE_FRONT2)) ||
             ((pSession->source == DMX_SOURCE_DVR0) && swts)))
         return -1;
 
-#endif
-#if defined(ADB_BOX)
+#else
 
     if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
             (pSession->source < DMX_SOURCE_FRONT3)) ||
@@ -441,7 +439,7 @@ static int convert_source(const dmx_source_t source)
     switch (source)
     {
         case DMX_SOURCE_FRONT0:
-#if defined(UFS910) || defined(OCTAGON1008) || defined(UFS912) || defined(ADB_BOX) || defined(SPARK) || defined(SPARK7162)
+#if defined(UFS910) || defined(OCTAGON1008) || defined(UFS912) || defined(ADB_BOX) || defined(SPARK) || defined(SPARK7162) || defined(SAGEMCOM88)
             tag = TSIN2;
 #else
             tag = TSIN0;
@@ -462,7 +460,7 @@ static int convert_source(const dmx_source_t source)
 
             }
 
-#elif defined(UFS913)
+#elif defined(UFS913) || defined(SAGEMCOM88)
             tag = 3;//TSIN2; //TSIN3
 #else
             tag = TSIN1;
@@ -475,16 +473,18 @@ static int convert_source(const dmx_source_t source)
             break;
 
         case (dmx_source_t)3: /* for ptiInit() which passes 0,1,2,3 instead of DVR0 */
+#elif defined(SAGEMCOM88)
+
+        case DMX_SOURCE_FRONT2:
+            tag = TSIN0;
+            break;
 #endif
 
 #if !defined(ADB_BOX)
         case DMX_SOURCE_DVR0:
             tag = SWTS0;
             break;
-#endif
-
-#if defined(ADB_BOX)
-
+#else //defined(ADB_BOX)
         case DMX_SOURCE_FRONT2:
             if (glowica == SINGLE)
             {
@@ -521,7 +521,7 @@ static struct stpti pti;
 
 void ptiInit(struct DeviceContext_s *pContext)
 {
-#if defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(SPARK7162) || defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(VITAMIN_HD5000)
+#if defined(SAGEMCOM88) ||  defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(SPARK7162) || defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(VITAMIN_HD5000)
     unsigned long start = 0xfe230000;
 #else
     unsigned long start = 0x19230000;
@@ -581,7 +581,7 @@ void ptiInit(struct DeviceContext_s *pContext)
          */
         stm_tsm_init(/*config */ 1);
 
-#if defined(TF7700) || defined(UFS922) || defined(UFC960) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX) || defined(UFS913)
+#if defined(SAGEMCOM88) ||  defined(TF7700) || defined(UFS922) || defined(UFC960) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX) || defined(UFS913)
         pti_hal_init(&pti, &pContext->DvbDemux, demultiplexDvbPackets, 2);
 #elif defined(SPARK7162)
         pti_hal_init(&pti, &pContext->DvbDemux, demultiplexDvbPackets, 3);
