@@ -613,7 +613,21 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/fp/was_timer_wakeup"                                          , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/fp/rtc"                                                       , NULL, zero_read, default_write_proc, NULL, ""},
 #if defined(SPARK) || defined(SPARK7162)
-        {cProcEntry, "stb/fp/aotom"                                                       , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/fp/aotom"                                                     , NULL, NULL, NULL, NULL, ""},
+	{cProcDir  , "stb/lcd"                                                          , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/lcd/symbol_network"                                           , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/lcd/symbol_usb"                                               , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/lcd/symbol_hdd"                                               , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/lcd/symbol_hddprogress"                                       , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/lcd/symbol_signal"                                            , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/lcd/symbol_timeshift"                                         , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/lcd/symbol_tv"                                                , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/lcd/symbol_recording"                                         , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/lcd/symbol_record_1"                                          , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/lcd/symbol_record_2"                                          , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/lcd/symbol_smartcard"                                         , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/lcd/symbol_parent_rating"                                     , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/lcd/symbol_play"                                              , NULL, NULL, NULL, NULL, ""},
 #endif
 
 	{cProcDir  , "stb/tsmux"                                                        , NULL, NULL, NULL, NULL, ""},
