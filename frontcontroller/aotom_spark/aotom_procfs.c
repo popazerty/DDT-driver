@@ -14,6 +14,8 @@
  *             +--- aotom (w)
  *  /proc/stb/lcd
  *             |
+ *             +--- show_symbols (w)
+ *             |
  *             +--- symbol_network (w)
  *             |
  *             +--- symbol_usb (w)
@@ -96,25 +98,6 @@ static int aotom_write(struct file *file, const char __user *buf,
   }
   printk(")\n");
 
-  return ret;
-}
-
-static int lcd_symbol_network_write(struct file *file, const char __user *buf,
-                           unsigned long count, void *data)
-{
-  char *page;
-  int ret = -ENOMEM;
-  page = (char *)__get_free_page(GFP_KERNEL);
-  if (page)
-  {
-    ret = -EFAULT;
-    if (copy_from_user(page, buf, count) == 0)
-    {
-      page[count] = '\0';
-      ret = count;
-    }
-    free_page((unsigned long)page);
-  }
   return ret;
 }
 
@@ -348,25 +331,6 @@ static int lcd_symbol_smartcard_write(struct file *file, const char __user *buf,
   return ret;
 }
 
-static int lcd_symbol_parent_rating_write(struct file *file, const char __user *buf,
-                           unsigned long count, void *data)
-{
-  char *page;
-  int ret = -ENOMEM;
-  page = (char *)__get_free_page(GFP_KERNEL);
-  if (page)
-  {
-    ret = -EFAULT;
-    if (copy_from_user(page, buf, count) == 0)
-    {
-      page[count] = '\0';
-      ret = count;
-    }
-    free_page((unsigned long)page);
-  }
-  return ret;
-}
-
 static int lcd_symbol_play_write(struct file *file, const char __user *buf,
                            unsigned long count, void *data)
 {
@@ -390,6 +354,12 @@ static int lcd_symbol_play_write(struct file *file, const char __user *buf,
   return ret;
 }
 
+static int null_write(struct file *file, const char __user *buf,
+                           unsigned long count, void *data)
+{
+  return count;
+}
+
 struct fp_procs
 {
   char *name;
@@ -398,7 +368,8 @@ struct fp_procs
 } fp_procs[] =
 {
   { "stb/fp/aotom", NULL, aotom_write },
-  { "stb/lcd/symbol_network", NULL, lcd_symbol_network_write },
+  { "stb/lcd/show_symbols", NULL, null_write },
+  { "stb/lcd/symbol_network", NULL, null_write },
   { "stb/lcd/symbol_usb", NULL, lcd_symbol_usb_write },
   { "stb/lcd/symbol_hdd", NULL, lcd_symbol_hdd_write },
   { "stb/lcd/symbol_hddprogress", NULL, lcd_symbol_hddprogress_write },
@@ -409,7 +380,7 @@ struct fp_procs
   { "stb/lcd/symbol_record_1", NULL, lcd_symbol_record_1_write },
   { "stb/lcd/symbol_record_2", NULL, lcd_symbol_record_2_write },
   { "stb/lcd/symbol_smartcard", NULL, lcd_symbol_smartcard_write },
-  { "stb/lcd/symbol_parent_rating", NULL, lcd_symbol_parent_rating_write },
+  { "stb/lcd/symbol_parent_rating", NULL, null_write },
   { "stb/lcd/symbol_play", NULL, lcd_symbol_play_write },
 };
 

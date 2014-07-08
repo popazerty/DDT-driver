@@ -615,6 +615,7 @@ struct ProcStructure_s e2Proc[] =
 #if defined(SPARK) || defined(SPARK7162)
 	{cProcEntry, "stb/fp/aotom"                                                     , NULL, NULL, NULL, NULL, ""},
 	{cProcDir  , "stb/lcd"                                                          , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/lcd/show_symbols"                                             , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/lcd/symbol_network"                                           , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/lcd/symbol_usb"                                               , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/lcd/symbol_hdd"                                               , NULL, NULL, NULL, NULL, ""},
