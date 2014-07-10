@@ -12,6 +12,10 @@
  *  /proc/stb/fp
  *             |
  *             +--- aotom (w)
+ *             |
+ *             +--- led0_pattern (w)
+ *             |
+ *             +--- led1_pattern (w)
  *  /proc/stb/lcd
  *             |
  *             +--- show_symbols (w)
@@ -354,6 +358,29 @@ static int lcd_symbol_play_write(struct file *file, const char __user *buf,
   return ret;
 }
 
+static int led0_pattern_write(struct file *file, const char __user *buf,
+                           unsigned long count, void *data)
+{
+  char *page;
+  long value;
+  int ret = -ENOMEM;
+  page = (char *)__get_free_page(GFP_KERNEL);
+  if (page)
+  {
+    ret = -EFAULT;
+    if (copy_from_user(page, buf, count) == 0)
+    {
+      page[count] = '\0';
+      value = simple_strtol(page, NULL, 0);
+      if (value==0) aotomSetLed(0,0);
+      else if ((value==0x55555555)||(value==0xffffffff)) aotomSetLed(0,1);
+      ret = count;
+    }
+    free_page((unsigned long)page);
+  }
+  return ret;
+}
+
 static int null_write(struct file *file, const char __user *buf,
                            unsigned long count, void *data)
 {
@@ -368,6 +395,8 @@ struct fp_procs
 } fp_procs[] =
 {
   { "stb/fp/aotom", NULL, aotom_write },
+  { "stb/fp/led0_pattern", NULL, led0_pattern_write },
+  { "stb/fp/led1_pattern", NULL, null_write },
   { "stb/lcd/show_symbols", NULL, null_write },
   { "stb/lcd/symbol_network", NULL, null_write },
   { "stb/lcd/symbol_usb", NULL, lcd_symbol_usb_write },
