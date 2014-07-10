@@ -119,8 +119,8 @@ static int lcd_symbol_usb_write(struct file *file, const char __user *buf,
     {
       page[count] = '\0';
       value = simple_strtol(page, NULL, 0);
-      if (value == 0) aotomSetIcon(USB,0);
-      else if (value == 1) aotomSetIcon(USB,1);
+      if (value == 0) aotomSetIcon(13,0);
+      else if (value == 1) aotomSetIcon(13,1);
       ret = count;
     }
     free_page((unsigned long)page);
@@ -142,8 +142,8 @@ static int lcd_symbol_hdd_write(struct file *file, const char __user *buf,
     {
       page[count] = '\0';
       value = simple_strtol(page, NULL, 0);
-      if (value == 0) aotomSetIcon(HDD_A9,0);
-      else if (value == 1) aotomSetIcon(HDD_A9,1);
+      if (value == 0) aotomSetIcon(30,0);
+      else if (value == 1) aotomSetIcon(30,1);
       ret = count;
     }
     free_page((unsigned long)page);
@@ -165,8 +165,8 @@ static int lcd_symbol_hddprogress_write(struct file *file, const char __user *bu
     {
       page[count] = '\0';
       value = simple_strtol(page, NULL, 0);
-      if (value == 0) aotomSetIcon(HDD_FULL,0);
-      else if (value == 1) aotomSetIcon(HDD_FULL,1);
+      if (value == 0) aotomSetIcon(22,0);
+      else if (value == 1) aotomSetIcon(22,1);
       ret = count;
     }
     free_page((unsigned long)page);
@@ -188,8 +188,8 @@ static int lcd_symbol_signal_write(struct file *file, const char __user *buf,
     {
       page[count] = '\0';
       value = simple_strtol(page, NULL, 0);
-      if (value == 0) aotomSetIcon(SAT,0);
-      else if (value == 1) aotomSetIcon(SAT,1);
+      if (value == 0) aotomSetIcon(42,0);
+      else if (value == 1) aotomSetIcon(42,1);
       ret = count;
     }
     free_page((unsigned long)page);
@@ -211,8 +211,8 @@ static int lcd_symbol_timeshift_write(struct file *file, const char __user *buf,
     {
       page[count] = '\0';
       value = simple_strtol(page, NULL, 0);
-      if (value == 0) aotomSetIcon(TIMESHIFT,0);
-      else if (value == 1) aotomSetIcon(TIMESHIFT,1);
+      if (value == 0) aotomSetIcon(43,0);
+      else if (value == 1) aotomSetIcon(43,1);
       ret = count;
     }
     free_page((unsigned long)page);
@@ -234,8 +234,8 @@ static int lcd_symbol_tv_write(struct file *file, const char __user *buf,
     {
       page[count] = '\0';
       value = simple_strtol(page, NULL, 0);
-      if (value == 0) aotomSetIcon(TVMODE_LOG,0);
-      else if (value == 1) aotomSetIcon(TVMODE_LOG,1);
+      if (value == 0) aotomSetIcon(27,0);
+      else if (value == 1) aotomSetIcon(27,1);
       ret = count;
     }
     free_page((unsigned long)page);
@@ -257,8 +257,8 @@ static int lcd_symbol_recording_write(struct file *file, const char __user *buf,
     {
       page[count] = '\0';
       value = simple_strtol(page, NULL, 0);
-      if (value == 0) aotomSetIcon(DISK_S0,0);
-      else if (value == 1) aotomSetIcon(DISK_S0,1);
+      if (value == 0) aotomSetIcon(41,0);
+      else if (value == 1) aotomSetIcon(41,1);
       ret = count;
     }
     free_page((unsigned long)page);
@@ -280,8 +280,8 @@ static int lcd_symbol_record_1_write(struct file *file, const char __user *buf,
     {
       page[count] = '\0';
       value = simple_strtol(page, NULL, 0);
-      if (value == 0) aotomSetIcon(REC1,0);
-      else if (value == 1) aotomSetIcon(REC1,1);
+      if (value == 0) aotomSetIcon(7,0);
+      else if (value == 1) aotomSetIcon(7,1);
       ret = count;
     }
     free_page((unsigned long)page);
@@ -303,8 +303,8 @@ static int lcd_symbol_record_2_write(struct file *file, const char __user *buf,
     {
       page[count] = '\0';
       value = simple_strtol(page, NULL, 0);
-      if (value == 0) aotomSetIcon(REC2,0);
-      else if (value == 1) aotomSetIcon(REC2,1);
+      if (value == 0) aotomSetIcon(15,0);
+      else if (value == 1) aotomSetIcon(15,1);
       ret = count;
     }
     free_page((unsigned long)page);
@@ -326,8 +326,8 @@ static int lcd_symbol_smartcard_write(struct file *file, const char __user *buf,
     {
       page[count] = '\0';
       value = simple_strtol(page, NULL, 0);
-      if (value == 0) aotomSetIcon(CI,0);
-      else if (value == 1) aotomSetIcon(CI,1);
+      if (value == 0) aotomSetIcon(12,0);
+      else if (value == 1) aotomSetIcon(12,1);
       ret = count;
     }
     free_page((unsigned long)page);
@@ -349,8 +349,8 @@ static int lcd_symbol_play_write(struct file *file, const char __user *buf,
     {
       page[count] = '\0';
       value = simple_strtol(page, NULL, 0);
-      if (value == 0) aotomSetIcon(PLAY_LOG,0);
-      else if (value == 1) aotomSetIcon(PLAY_LOG,1);
+      if (value == 0) aotomSetIcon(3,0);
+      else if (value == 1) aotomSetIcon(3,1);
       ret = count;
     }
     free_page((unsigned long)page);
@@ -382,6 +382,9 @@ static int led0_pattern_write(struct file *file, const char __user *buf,
       else if ((value==0x55555555)||(value==0xffffffff)) aotomSetLed(0,1);
       ret = count;
     }
+
+    printk("\n");
+
     free_page((unsigned long)page);
   }
   return ret;
@@ -411,6 +414,9 @@ static int led1_pattern_write(struct file *file, const char __user *buf,
       else if ((value==0x55555555)||(value==0xffffffff)) aotomSetLed(1,1);
       ret = count;
     }
+
+    printk("\n");
+
     free_page((unsigned long)page);
   }
   return ret;
