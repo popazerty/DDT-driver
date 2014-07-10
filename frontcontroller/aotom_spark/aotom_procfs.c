@@ -18,6 +18,8 @@
  *             +--- led1_pattern (w)
  *  /proc/stb/lcd
  *             |
+ *             +--- scroll_delay (w)
+ *             |
  *             +--- show_symbols (w)
  *             |
  *             +--- symbol_network (w)
@@ -420,6 +422,7 @@ struct fp_procs
   { "stb/fp/aotom", NULL, aotom_write },
   { "stb/fp/led0_pattern", NULL, led0_pattern_write },
   { "stb/fp/led1_pattern", NULL, led1_pattern_write },
+  { "stb/lcd/scroll_delay", NULL, null_write },
   { "stb/lcd/show_symbols", NULL, null_write },
   { "stb/lcd/symbol_network", NULL, null_write },
   { "stb/lcd/symbol_usb", NULL, lcd_symbol_usb_write },
