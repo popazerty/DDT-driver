@@ -364,9 +364,6 @@ static int led0_pattern_write(struct file *file, const char __user *buf,
   char *page;
   long value;
   int ret = -ENOMEM;
-
-  printk("%s(%ld, ", __FUNCTION__, count);
-
   page = (char *)__get_free_page(GFP_KERNEL);
   if (page)
   {
@@ -374,17 +371,11 @@ static int led0_pattern_write(struct file *file, const char __user *buf,
     if (copy_from_user(page, buf, count) == 0)
     {
       page[count] = '\0';
-
-      printk("%s", page);
-
-      value = simple_strtol(page, NULL, 0);
+      value = simple_strtol(page, NULL, 16);
       if (value==0) aotomSetLed(0,0);
       else if ((value==0x55555555)||(value==0xffffffff)) aotomSetLed(0,1);
       ret = count;
     }
-
-    printk("\n");
-
     free_page((unsigned long)page);
   }
   return ret;
@@ -396,9 +387,6 @@ static int led1_pattern_write(struct file *file, const char __user *buf,
   char *page;
   long value;
   int ret = -ENOMEM;
-
-  printk("%s(%ld, ", __FUNCTION__, count);
-
   page = (char *)__get_free_page(GFP_KERNEL);
   if (page)
   {
@@ -406,17 +394,11 @@ static int led1_pattern_write(struct file *file, const char __user *buf,
     if (copy_from_user(page, buf, count) == 0)
     {
       page[count] = '\0';
-
-      printk("%s", page);
-
-      value = simple_strtol(page, NULL, 0);
+      value = simple_strtol(page, NULL, 16);
       if (value==0) aotomSetLed(1,0);
       else if ((value==0x55555555)||(value==0xffffffff)) aotomSetLed(1,1);
       ret = count;
     }
-
-    printk("\n");
-
     free_page((unsigned long)page);
   }
   return ret;
