@@ -406,6 +406,9 @@ static int led1_pattern_write(struct file *file, const char __user *buf,
 
       printk("%s", page);
 
+      value = simple_strtol(page, NULL, 0);
+      if (value==0) aotomSetLed(1,0);
+      else if ((value==0x55555555)||(value==0xffffffff)) aotomSetLed(1,1);
       ret = count;
     }
     free_page((unsigned long)page);
