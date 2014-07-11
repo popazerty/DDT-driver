@@ -245,29 +245,6 @@ static int lcd_symbol_tv_write(struct file *file, const char __user *buf,
   return ret;
 }
 
-static int lcd_symbol_recording_write(struct file *file, const char __user *buf,
-                           unsigned long count, void *data)
-{
-  char *page;
-  long value;
-  int ret = -ENOMEM;
-  page = (char *)__get_free_page(GFP_KERNEL);
-  if (page)
-  {
-    ret = -EFAULT;
-    if (copy_from_user(page, buf, count) == 0)
-    {
-      page[count] = '\0';
-      value = simple_strtol(page, NULL, 0);
-      if (value == 0) aotomSetIcon(41,0);
-      else if (value == 1) aotomSetIcon(41,1);
-      ret = count;
-    }
-    free_page((unsigned long)page);
-  }
-  return ret;
-}
-
 static int lcd_symbol_record_1_write(struct file *file, const char __user *buf,
                            unsigned long count, void *data)
 {
@@ -328,8 +305,8 @@ static int lcd_symbol_smartcard_write(struct file *file, const char __user *buf,
     {
       page[count] = '\0';
       value = simple_strtol(page, NULL, 0);
-      if (value == 0) aotomSetIcon(12,0);
-      else if (value == 1) aotomSetIcon(12,1);
+      if (value == 0) aotomSetIcon(11,0);
+      else if (value == 1) aotomSetIcon(11,1);
       ret = count;
     }
     free_page((unsigned long)page);
@@ -431,7 +408,7 @@ struct fp_procs
   { "stb/lcd/symbol_signal", NULL, lcd_symbol_signal_write },
   { "stb/lcd/symbol_timeshift", NULL, lcd_symbol_timeshift_write },
   { "stb/lcd/symbol_tv", NULL, lcd_symbol_tv_write },
-  { "stb/lcd/symbol_recording", NULL, lcd_symbol_recording_write },
+  { "stb/lcd/symbol_recording", NULL, null_write },
   { "stb/lcd/symbol_record_1", NULL, lcd_symbol_record_1_write },
   { "stb/lcd/symbol_record_2", NULL, lcd_symbol_record_2_write },
   { "stb/lcd/symbol_smartcard", NULL, lcd_symbol_smartcard_write },
