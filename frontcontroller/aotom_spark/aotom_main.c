@@ -322,9 +322,29 @@ int aotomSetLed(int which, int on)
 	return res;
 }
 
+int aotomWriteText(char *buf, size_t len)
+{
+	int res = 0;
+	struct vfd_ioctl_data data;
+	if (len > sizeof(data.data))
+		data.length = sizeof(data.data);
+	else
+		data.length = len;
+	while ((data.length > 0) && (buf[data.length - 1 ] == '\n'))
+	  data.length--;
+	if (data.length > sizeof(data.data))
+		len = data.length = sizeof(data.data);
+	memcpy(data.data, buf, data.length);
+	res = run_draw_thread(&data);
+	if (res < 0)
+		return res;
+	return len;
+}
+
 /* export for later use in e2_proc */
 EXPORT_SYMBOL(aotomSetIcon);
 EXPORT_SYMBOL(aotomSetLed);
+EXPORT_SYMBOL(aotomWriteText);
 
 static ssize_t AOTOMdev_write(struct file *filp, const char *buff, size_t len, loff_t *off)
 {

@@ -9,6 +9,9 @@
 /proc/stb/fp/aotom_icon", "w"
 */
 /*
+ *  /proc/
+ *             |
+ *             +--- vfd (w)
  *  /proc/stb/fp
  *             |
  *             +--- aotom (w)
@@ -54,6 +57,26 @@ extern int remove_e2_procs(char *name, read_proc_t *read_proc, write_proc_t *wri
 
 extern int aotomSetIcon(int which, int on);
 extern int aotomSetLed(int which, int on);
+extern int aotomWriteText(char *buf, size_t len);
+
+static int vfd_write(struct file *file, const char __user *buf,
+                           unsigned long count, void *data)
+{
+  char *page;
+  int value;
+  int ret = -ENOMEM;
+  page = (char *)__get_free_page(GFP_KERNEL);
+  if (page)
+  {
+    ret = -EFAULT;
+    if (copy_from_user(page, buf, count) == 0)
+    {
+      ret = aotomWriteText(page, count);
+    }
+    free_page((unsigned long)page);
+  }
+  return ret;
+}
 
 // Proc for accessing quick control of aotom
 // String format: fxy
@@ -396,6 +419,7 @@ struct fp_procs
   write_proc_t *write_proc;
 } fp_procs[] =
 {
+  { "vfd", NULL, vfd_write },
   { "stb/fp/aotom", NULL, aotom_write },
   { "stb/fp/led0_pattern", NULL, led0_pattern_write },
   { "stb/fp/led1_pattern", NULL, led1_pattern_write },

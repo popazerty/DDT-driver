@@ -552,6 +552,10 @@ struct ProcStructure_s e2Proc[] =
 {
 	{cProcEntry, "progress"                                                         , NULL, NULL, NULL, NULL, ""},
 
+#if defined(SPARK) || defined(SPARK7162)
+	{cProcEntry, "vfd"                                                              , NULL, NULL, NULL, NULL, ""},
+#endif
+
 	{cProcEntry, "bus/nim_sockets"                                                  , NULL, NULL, NULL, NULL, ""},
 	{cProcDir  , "stb"                                                              , NULL, NULL, NULL, NULL, ""},
 	{cProcDir  , "stb/audio"                                                        , NULL, NULL, NULL, NULL, ""},
