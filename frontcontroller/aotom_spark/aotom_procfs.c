@@ -50,6 +50,9 @@
  *             +--- symbol_parent_rating (w)
  *             |
  *             +--- symbol_play (w)
+ *  /proc/stb/power/
+ *             |
+ *             +--- standbyled (w)
 */
 
 extern int install_e2_procs(char *name, read_proc_t *read_proc, write_proc_t *write_proc, void *data);
@@ -57,6 +60,7 @@ extern int remove_e2_procs(char *name, read_proc_t *read_proc, write_proc_t *wri
 
 extern int aotomSetIcon(int which, int on);
 extern int aotomSetLed(int which, int on);
+extern int aotomEnableLed(int which, int on);
 extern int aotomWriteText(char *buf, size_t len);
 
 static int vfd_write(struct file *file, const char __user *buf,
@@ -406,6 +410,39 @@ static int led1_pattern_write(struct file *file, const char __user *buf,
   return ret;
 }
 
+static int power_standbyled_write(struct file *file, const char __user *buf,
+                           unsigned long count, void *data)
+{
+  char *page;
+  int ret = -ENOMEM;
+
+  printk("%s(%ld, ", __FUNCTION__, count);
+
+  page = (char *)__get_free_page(GFP_KERNEL);
+  if (page)
+  {
+    ret = -EFAULT;
+    if (copy_from_user(page, buf, count) == 0)
+    {
+      page[count] = '\0';
+
+      printk("%s", page);
+
+      if (strcmp(page,"on")==0) {
+        aotomEnableLed(0,1);
+        printk("on");
+      }
+      else if (strcmp(page,"off")==0) {
+        aotomEnableLed(0,0);
+        printk("off");
+      }
+      ret = count;
+    }
+    free_page((unsigned long)page);
+  }
+  return ret;
+}
+
 static int null_write(struct file *file, const char __user *buf,
                            unsigned long count, void *data)
 {
@@ -438,6 +475,7 @@ struct fp_procs
   { "stb/lcd/symbol_smartcard", NULL, lcd_symbol_smartcard_write },
   { "stb/lcd/symbol_parent_rating", NULL, null_write },
   { "stb/lcd/symbol_play", NULL, lcd_symbol_play_write },
+  { "stb/power/standbyled", NULL, power_standbyled_write },
 };
 
 void create_proc_fp(void)

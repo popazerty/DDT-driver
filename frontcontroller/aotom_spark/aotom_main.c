@@ -78,6 +78,7 @@ typedef struct {
 	int state;
 	int period;
 	int stop;
+	int enable;
 	struct task_struct *led_task;
 	struct semaphore led_sem;
 } tLedState;
@@ -319,8 +320,22 @@ int aotomSetLed(int which, int on)
 		printk("VFD/AOTOM led number out of range %d\n", which);
 		return -EINVAL;
 	}
-	res = YWPANEL_VFD_SetLed(which,on);
-	led_state[which].state = on;
+	if (led_state[which].enable) {
+		res = YWPANEL_VFD_SetLed(which,on);
+		led_state[which].state = on;
+	}
+	return res;
+}
+
+int aotomEnableLed(int which, int on)
+{
+	int  res = 0;
+	if (which < 0 || which >= LASTLED)
+	{
+		printk("VFD/AOTOM led number out of range %d\n", which);
+		return -EINVAL;
+	}
+	led_state[which].enable = on;
 	return res;
 }
 
@@ -347,6 +362,7 @@ int aotomWriteText(char *buf, size_t len)
 EXPORT_SYMBOL(aotomSetIcon);
 EXPORT_SYMBOL(aotomSetLed);
 EXPORT_SYMBOL(aotomWriteText);
+EXPORT_SYMBOL(aotomEnableLed);
 
 static ssize_t AOTOMdev_write(struct file *filp, const char *buff, size_t len, loff_t *off)
 {
@@ -945,6 +961,7 @@ static int __init aotom_init_module(void)
 		led_state[i].state = LOG_OFF;
 		led_state[i].period = 0;
 		led_state[i].stop = 1;
+		led_state[i].enable = 1;
 		sema_init(&led_state[i].led_sem, 0);
 		led_state[i].led_task = kthread_run(led_thread, (void *) i, "led_thread");
 	}
