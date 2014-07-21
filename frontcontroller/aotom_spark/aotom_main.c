@@ -51,6 +51,7 @@
 #include <linux/rtc.h>
 #include <linux/platform_device.h>
 
+#include "aotom_ywdefs.h"
 #include "aotom_main.h"
 #include "utf.h"
 
@@ -246,8 +247,9 @@ static int run_draw_thread(struct vfd_ioctl_data *draw_data)
 	}
 
 	if (draw_data->length < YWPANEL_width) {
-	char buf[DISPLAYWIDTH_MAX];
-	memset(buf, ' ', sizeof(buf));
+	char buf[DISPLAYWIDTH_MAX + 1];
+	memset(buf, 0, sizeof(buf));
+	memset(buf, ' ', sizeof(buf) - 1);
 	if (draw_data->length)
 		memcpy(buf, draw_data->data, draw_data->length);
 	YWPANEL_VFD_ShowString(buf);
@@ -355,7 +357,10 @@ static ssize_t AOTOMdev_write(struct file *filp, const char *buff, size_t len, l
 
 	dprintk(5, "%s > (len %d, offs %d)\n", __func__, len, (int) *off);
 
-	kernel_buf = kmalloc(len, GFP_KERNEL);
+	kernel_buf = kmalloc(len + 1, GFP_KERNEL);
+ 
+	memset(kernel_buf, 0, len + 1);
+	memset(&data, 0, sizeof(struct vfd_ioctl_data));
 
 	if (kernel_buf == NULL) {
 		printk("%s return no mem<\n", __func__);
@@ -926,7 +931,7 @@ static int __init aotom_init_module(void)
 	}
 
 	VFD_clr();
-	
+
 	if(button_dev_init() != 0)
 		return -1;
 
