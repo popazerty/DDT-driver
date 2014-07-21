@@ -353,11 +353,11 @@ typedef struct YWPANEL_DVFDData_s
 {
     YWPANEL_DVFDDataType_t  type;
 
-    U8						setValue;
+    u8						setValue;
 
-    U8						ulen;
-    U8						address[16];
-    U8						DisplayValue[16][5];
+    u8						ulen;
+    u8						address[16];
+    u8						DisplayValue[16][5];
 }YWPANEL_DVFDData_t;
 
 typedef struct YWPANEL_IRKEY_s
