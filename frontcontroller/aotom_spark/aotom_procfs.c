@@ -50,6 +50,8 @@
  *             +--- symbol_parent_rating (w)
  *             |
  *             +--- symbol_play (w)
+ *             |
+ *             +--- oled_brightness (w)
  *  /proc/stb/power/
  *             |
  *             +--- standbyled (w)
@@ -62,6 +64,7 @@ extern int aotomSetIcon(int which, int on);
 extern int aotomSetLed(int which, int on);
 extern int aotomEnableLed(int which, int on);
 extern int aotomWriteText(char *buf, size_t len);
+extern int aotomSetBrightness(int level);
 
 static int vfd_write(struct file *file, const char __user *buf,
                            unsigned long count, void *data)
@@ -410,6 +413,28 @@ static int led1_pattern_write(struct file *file, const char __user *buf,
   return ret;
 }
 
+static int lcd_oled_brightness_write(struct file *file, const char __user *buf,
+                           unsigned long count, void *data)
+{
+  char *page;
+  long level;
+  int ret = -ENOMEM;
+  page = (char *)__get_free_page(GFP_KERNEL);
+  if (page)
+  {
+    ret = -EFAULT;
+    if (copy_from_user(page, buf, count) == 0)
+    {
+      page[count] = '\0';
+      level = simple_strtol(page, NULL, 10);
+      aotomSetBrightness((int)level);
+      ret = count;
+    }
+    free_page((unsigned long)page);
+  }
+  return ret;
+}
+
 static int power_standbyled_write(struct file *file, const char __user *buf,
                            unsigned long count, void *data)
 {
@@ -475,6 +500,7 @@ struct fp_procs
   { "stb/lcd/symbol_smartcard", NULL, lcd_symbol_smartcard_write },
   { "stb/lcd/symbol_parent_rating", NULL, null_write },
   { "stb/lcd/symbol_play", NULL, lcd_symbol_play_write },
+  { "stb/lcd/oled_brightness", NULL, lcd_oled_brightness_write },
   { "stb/power/standbyled", NULL, power_standbyled_write },
 };
 

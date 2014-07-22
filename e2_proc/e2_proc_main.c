@@ -643,6 +643,7 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/lcd/symbol_smartcard"                                         , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/lcd/symbol_parent_rating"                                     , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/lcd/symbol_play"                                              , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/lcd/oled_brightness"                                          , NULL, NULL, NULL, NULL, ""},
 	{cProcDir  , "stb/power"                                                        , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/power/standbyled"                                             , NULL, NULL, NULL, NULL, ""},
 #endif

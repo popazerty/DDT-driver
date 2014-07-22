@@ -358,11 +358,24 @@ int aotomWriteText(char *buf, size_t len)
 	return len;
 }
 
+int aotomSetBrightness(int level)
+{
+	int  res = 0;
+	dprintk(5, "%s > %d\n", __func__, level);
+	if (level < 0)
+		level = 0;
+	else if (level > 7)
+		level = 7;
+	res = YWPANEL_VFD_SetBrightness(level);
+	return res;
+}
+
 /* export for later use in e2_proc */
 EXPORT_SYMBOL(aotomSetIcon);
 EXPORT_SYMBOL(aotomSetLed);
 EXPORT_SYMBOL(aotomWriteText);
 EXPORT_SYMBOL(aotomEnableLed);
+EXPORT_SYMBOL(aotomSetBrightness);
 
 static ssize_t AOTOMdev_write(struct file *filp, const char *buff, size_t len, loff_t *off)
 {
