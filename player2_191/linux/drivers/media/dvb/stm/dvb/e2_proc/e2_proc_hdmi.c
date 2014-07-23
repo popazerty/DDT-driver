@@ -10,6 +10,7 @@
 #include <linux/dvb/audio.h>
 #include <linux/smp_lock.h>
 #include <linux/string.h>
+#include <linux/kernel.h>      /* sscanf */
 #include <linux/fb.h>
 
 #include "../backend.h"
@@ -174,6 +175,8 @@ int proc_hdmi_edid_handling_write(struct file *file, const char __user *buf, uns
 	char *page;
 	ssize_t ret = -ENOMEM;
 	unsigned int value;
+	int argument = -1;
+	int test = -1;
 
 	char* myString = kmalloc(count + 1, GFP_KERNEL);
 
@@ -193,21 +196,17 @@ int proc_hdmi_edid_handling_write(struct file *file, const char __user *buf, uns
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 
-		printk("%s\n", myString);
-
-		if (strncmp("strict", myString, count - 1) == 0)
+		printk("[HDMI] EDID handling arg: %s\n", myString);
+		test = sscanf (myString,"%d",&argument);
+		if((0 < test) && ( 0 == argument ))
 		{
 			value = STMHDMIIO_EDID_STRICT_MODE_HANDLING;
-		}
-		else if (strncmp("nonstrict", myString, count - 1) == 0)
-		{
-			value = STMHDMIIO_EDID_NON_STRICT_MODE_HANDLING;
 		}
 		else
 		{
-			value = STMHDMIIO_EDID_STRICT_MODE_HANDLING;
+			value = STMHDMIIO_EDID_NON_STRICT_MODE_HANDLING;
 		}
-
+		printk("[HDMI] EDID handling: %s\n", (value==STMHDMIIO_EDID_STRICT_MODE_HANDLING)?"strict":"none strict");
 		stmhdmiio_set_edid_handling(value);
 
 		/* always return count to avoid endless loop */
@@ -235,12 +234,12 @@ int proc_hdmi_edid_handling_read(char *page, char **start, off_t off, int count,
 	switch (value)
 	{
 		case STMHDMIIO_EDID_NON_STRICT_MODE_HANDLING:
-			len = sprintf(page, "nonstrict\n");
+			len = sprintf(page, "00000001\n");
 			break;
 
 		case STMHDMIIO_EDID_STRICT_MODE_HANDLING:
 		default:
-			len = sprintf(page, "strict\n");
+			len = sprintf(page, "00000000\n");
 			break;
 	}
 
