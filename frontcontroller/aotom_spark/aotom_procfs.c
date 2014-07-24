@@ -16,6 +16,8 @@
  *             |
  *             +--- aotom (w)
  *             |
+ *             +--- version (r)
+ *             |
  *             +--- led0_pattern (w)
  *             |
  *             +--- led1_pattern (w)
@@ -65,6 +67,7 @@ extern int aotomSetLed(int which, int on);
 extern int aotomEnableLed(int which, int on);
 extern int aotomWriteText(char *buf, size_t len);
 extern int aotomSetBrightness(int level);
+extern YWPANEL_FP_DispType_t panel_disp_type;
 
 static int vfd_write(struct file *file, const char __user *buf,
                            unsigned long count, void *data)
@@ -135,6 +138,14 @@ static int aotom_write(struct file *file, const char __user *buf,
   printk(")\n");
 
   return ret;
+}
+
+static int fp_version_read(char *page, char **start, off_t off, int count,
+                          int *eof, void *data_unused)
+{
+  int len = 0;
+  len = sprintf(page, "&d\n", panel_disp_type);
+  return len;
 }
 
 static int lcd_symbol_usb_write(struct file *file, const char __user *buf,
@@ -485,6 +496,7 @@ struct fp_procs
   { "stb/fp/aotom", NULL, aotom_write },
   { "stb/fp/led0_pattern", NULL, led0_pattern_write },
   { "stb/fp/led1_pattern", NULL, led1_pattern_write },
+  { "stb/fp/version", fp_version_read, NULL },
   { "stb/lcd/scroll_delay", NULL, null_write },
   { "stb/lcd/show_symbols", NULL, null_write },
   { "stb/lcd/symbol_network", NULL, null_write },
