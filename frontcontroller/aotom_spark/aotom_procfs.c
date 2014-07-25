@@ -144,7 +144,7 @@ static int fp_version_read(char *page, char **start, off_t off, int count,
                           int *eof, void *data_unused)
 {
   int len = 0;
-  len = sprintf(page, "&d\n", aotomGetVersion());
+  len = sprintf(page, "%d\n", aotomGetVersion());
   return len;
 }
 
