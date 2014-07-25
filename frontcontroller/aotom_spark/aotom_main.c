@@ -534,7 +534,7 @@ static int AOTOMdev_ioctl(struct inode *Inode, struct file *File, unsigned int c
 				break;
 			}
 			break;
-			default:
+		default:
 			{
 				int icon_nr = aotom_data.u.icon.icon_nr;
 				if(icon_nr & ~0xff)
@@ -580,7 +580,7 @@ static int AOTOMdev_ioctl(struct inode *Inode, struct file *File, unsigned int c
 					res = 0;
 					case -1:
 					break;
-					default:
+				default:
 					res = aotomSetIcon(icon_nr, aotom_data.u.icon.on);
 				}
 			}
