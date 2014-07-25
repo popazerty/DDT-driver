@@ -370,12 +370,18 @@ int aotomSetBrightness(int level)
 	return res;
 }
 
+int aotomGetVersion()
+{
+	return panel_version.DisplayInfo;
+}
+
 /* export for later use in e2_proc */
 EXPORT_SYMBOL(aotomSetIcon);
 EXPORT_SYMBOL(aotomSetLed);
 EXPORT_SYMBOL(aotomWriteText);
 EXPORT_SYMBOL(aotomEnableLed);
 EXPORT_SYMBOL(aotomSetBrightness);
+EXPORT_SYMBOL(aotomGetVersion);
 
 static ssize_t AOTOMdev_write(struct file *filp, const char *buff, size_t len, loff_t *off)
 {

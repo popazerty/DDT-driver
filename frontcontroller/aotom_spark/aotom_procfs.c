@@ -67,7 +67,7 @@ extern int aotomSetLed(int which, int on);
 extern int aotomEnableLed(int which, int on);
 extern int aotomWriteText(char *buf, size_t len);
 extern int aotomSetBrightness(int level);
-extern YWPANEL_FP_DispType_t panel_disp_type;
+extern int aotomGetVersion();
 
 static int vfd_write(struct file *file, const char __user *buf,
                            unsigned long count, void *data)
@@ -144,7 +144,7 @@ static int fp_version_read(char *page, char **start, off_t off, int count,
                           int *eof, void *data_unused)
 {
   int len = 0;
-  len = sprintf(page, "&d\n", panel_disp_type);
+  len = sprintf(page, "&d\n", aotomGetVersion());
   return len;
 }
 
