@@ -291,20 +291,24 @@ int aotomSetIcon(int which, int on)
 	int  res = 0;
 
 	dprintk(5, "%s > %d, %d\n", __func__, which, on);
-	if (which < 1 || which > 46)
-	{
-		printk("VFD/AOTOM icon number out of range %d\n", which);
-		return -EINVAL;
-	}
 
-	if (which == 46) {
-		VFD_set_all_icons(on);
-	}
-	else {
-		which-=1;
-		res = VFD_Show_Icon(((which/15)+11)*16+(which%15)+1, on);
-	}
+	if (panel_version.DisplayInfo != YWPANEL_FP_DISPTYPE_LED) {
 
+		if (which < 1 || which > 46)
+		{
+			printk("VFD/AOTOM icon number out of range %d\n", which);
+			return -EINVAL;
+		}
+
+		if (which == 46) {
+			VFD_set_all_icons(on);
+		}
+		else {
+			which-=1;
+			res = VFD_Show_Icon(((which/15)+11)*16+(which%15)+1, on);
+		}
+
+	}
 
 	dprintk(10, "%s <\n", __func__);
 

@@ -498,15 +498,6 @@ struct fp_procs
   { "stb/fp/led1_pattern", NULL, led1_pattern_write },
   { "stb/fp/version", fp_version_read, NULL },
   { "stb/power/standbyled", NULL, power_standbyled_write },
-};
-
-struct lcd_procs
-{
-  char *name;
-  read_proc_t *read_proc;
-  write_proc_t *write_proc;
-} lcd_procs[] =
-{
   { "stb/lcd/scroll_delay", NULL, null_write },
   { "stb/lcd/show_symbols", NULL, null_write },
   { "stb/lcd/symbol_network", NULL, null_write },
@@ -532,13 +523,6 @@ void create_proc_fp(void)
   {
     install_e2_procs(fp_procs[i].name, fp_procs[i].read_proc, fp_procs[i].write_proc, NULL);
   }
-  if (aotomGetVersion() != YWPANEL_FP_DISPTYPE_LED)
-  {
-    for(i = 0; i < sizeof(lcd_procs)/sizeof(lcd_procs[0]); i++)
-    {
-      install_e2_procs(lcd_procs[i].name, lcd_procs[i].read_proc, lcd_procs[i].write_proc, NULL);
-    }
-  }
 }
 
 void remove_proc_fp(void)
@@ -547,13 +531,6 @@ void remove_proc_fp(void)
   for(i = sizeof(fp_procs)/sizeof(fp_procs[0]) - 1; i >= 0; i--)
   {
     remove_e2_procs(fp_procs[i].name, fp_procs[i].read_proc, fp_procs[i].write_proc);
-  }
-  if (aotomGetVersion() != YWPANEL_FP_DISPTYPE_LED)
-  {
-    for(i = sizeof(lcd_procs)/sizeof(lcd_procs[0]) - 1; i >= 0; i--)
-    {
-      remove_e2_procs(lcd_procs[i].name, lcd_procs[i].read_proc, lcd_procs[i].write_proc);
-    }
   }
 }
 
