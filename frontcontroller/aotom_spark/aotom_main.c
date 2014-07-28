@@ -250,11 +250,13 @@ static int run_draw_thread(struct vfd_ioctl_data *draw_data)
 
 	// Disable scroll for LED displays and crop to the first 4 chars
 	if (panel_version.DisplayInfo == YWPANEL_FP_DISPTYPE_LED) {
-		char buf[YWPANEL_width + 1];
+		int saved = 0;
+		int len=draw_data->length;
+		if (len > 2 && data->data[2] == '.') saved = 1;
+		char buf[YWPANEL_width + saved + 1];
 		memset(buf, 0, sizeof(buf));
 		memset(buf, ' ', sizeof(buf) - 1);
-		int len=draw_data->length;
-		if (len > YWPANEL_width) len=YWPANEL_width;
+		if ((len-saved)>YWPANEL_width) len=YWPANEL_width+saved;
 		if (len) memcpy(buf, draw_data->data, len);
 		YWPANEL_VFD_ShowString(buf);
 	}
