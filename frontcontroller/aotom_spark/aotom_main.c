@@ -4,6 +4,7 @@
  * (c) 2010 Spider-Team
  * (c) 2011 oSaoYa
  * (c) 2012-1012 Stefan Seyfried
+ * (c) 2014 skl
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -241,25 +242,26 @@ static int run_draw_thread(struct vfd_ioctl_data *draw_data)
 
 	// stop existing thread, if any
 	if(!draw_thread_stop && draw_task) {
-	kthread_stop(draw_task);
-	while(!draw_thread_stop)
-		msleep(1);
-	draw_task = 0;
+		kthread_stop(draw_task);
+		while(!draw_thread_stop)
+			msleep(1);
+		draw_task = 0;
 	}
 
-	if (draw_data->length < YWPANEL_width) {
-	char buf[DISPLAYWIDTH_MAX + 1];
-	memset(buf, 0, sizeof(buf));
-	memset(buf, ' ', sizeof(buf) - 1);
-	if (draw_data->length)
-		memcpy(buf, draw_data->data, draw_data->length);
-	YWPANEL_VFD_ShowString(buf);
-	} else {
-	draw_thread_stop = 2;
-	draw_task = kthread_run(draw_thread,draw_data,"draw_thread");
+	if ((draw_data->length < YWPANEL_width) || (panel_version.DisplayInfo == YWPANEL_FP_DISPTYPE_LED)) {
+		char buf[DISPLAYWIDTH_MAX + 1];
+		memset(buf, 0, sizeof(buf));
+		memset(buf, ' ', sizeof(buf) - 1);
+		if (draw_data->length)
+			memcpy(buf, draw_data->data, draw_data->length);
+		YWPANEL_VFD_ShowString(buf);
+	} 
+	else {
+		draw_thread_stop = 2;
+		draw_task = kthread_run(draw_thread,draw_data,"draw_thread");
 
-	//wait until thread has copied the argument
-	while(draw_thread_stop == 2)
+		//wait until thread has copied the argument
+		while(draw_thread_stop == 2)
 		msleep(1);
 	}
 	up(&draw_thread_sem);
