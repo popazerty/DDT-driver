@@ -255,7 +255,7 @@ static int run_draw_thread(struct vfd_ioctl_data *draw_data)
 		if (draw_data->length)
 			memcpy(buf, draw_data->data, draw_data->length);
 		YWPANEL_VFD_ShowString(buf);
-	} 
+	}
 	else {
 		draw_thread_stop = 2;
 		draw_task = kthread_run(draw_thread,draw_data,"draw_thread");

@@ -1,5 +1,5 @@
 /*
- * aotom_main.c
+ * aotom_procfs.c
  *
  * (c) 2014 skl
  *
