@@ -18,6 +18,10 @@
  *             |
  *             +--- version (r)
  *             |
+ *             +--- rtc (w)
+ *             |
+ *             +--- rtc_offset (w)
+ *             |
  *             +--- led0_pattern (w)
  *             |
  *             +--- led1_pattern (w)
@@ -68,6 +72,8 @@ extern int aotomEnableLed(int which, int on);
 extern int aotomWriteText(char *buf, size_t len);
 extern int aotomSetBrightness(int level);
 extern int aotomGetVersion();
+
+static int rtc_offset = 0;
 
 static int vfd_write(struct file *file, const char __user *buf,
                            unsigned long count, void *data)
@@ -138,6 +144,82 @@ static int aotom_write(struct file *file, const char __user *buf,
   printk(")\n");
 
   return ret;
+}
+
+static int aotom_read_rtc(char *page, char **start, off_t off, int count, int *eof, void *data) {
+	int len = 0;
+	u32 rtc_time = YWPANEL_FP_GetTime();
+	if(NULL != page)
+	{
+		/* AOTOM needs time in local time so deduct rtc_offset for e2 */
+		len = sprintf(page,"%u\n", rtc_time-rtc_offset);
+	}
+	return len;
+}
+
+static int aotom_write_rtc(struct file *file, const char __user *buffer, unsigned long count, void *data) {
+	char *page = NULL;
+	ssize_t ret = -ENOMEM;
+	u32 argument = 0;
+	int test = -1;
+	char *myString = kmalloc(count + 1, GFP_KERNEL);
+	printk("%s %ld - ", __FUNCTION__, count);
+	page = (char *)__get_free_page(GFP_KERNEL);
+	if (page)
+	{
+		ret = -EFAULT;
+		if (copy_from_user(page, buffer, count))
+			goto out;
+		strncpy(myString, page, count);
+		myString[count] = '\0';
+		printk("%s -> %s\n",__FUNCTION__, myString);
+		test = sscanf (myString,"%u",&argument);
+		if(0 < test)
+		{
+			/* AOTOM needs time in local time so add rtc_offset for time from e2 */
+			YWPANEL_FP_SetTime(argument+rtc_offset);
+			YWPANEL_FP_ControlTimer(true);
+		}
+		/* always return count to avoid endless loop */
+		ret = count;
+	}
+out:
+	free_page((unsigned long)page);
+	kfree(myString);
+	return ret;
+}
+
+static int aotom_read_rtc_offset(char *page, char **start, off_t off, int count, int *eof, void *data) {
+	int len = 0;
+	if(NULL != page)
+		len = sprintf(page,"%d\n", rtc_offset);
+	return len;
+}
+
+static int aotom_write_rtc_offset(struct file *file, const char __user *buffer, unsigned long count, void *data) {
+	char *page = NULL;
+	ssize_t ret = -ENOMEM;
+	int test = -1;
+	char *myString = kmalloc(count + 1, GFP_KERNEL);
+	printk("%s %ld - ", __FUNCTION__, count);
+	page = (char *)__get_free_page(GFP_KERNEL);
+	if (page)
+	{
+		ret = -EFAULT;
+		if (copy_from_user(page, buffer, count))
+			goto out;
+		strncpy(myString, page, count);
+		myString[count] = '\0';
+		printk("%s -> %s\n",__FUNCTION__, myString);
+		test = sscanf (myString,"%d",&rtc_offset);
+		printk(" offset: %d\n",rtc_offset);
+		/* always return count to avoid endless loop */
+		ret = count;
+	}
+out:
+	free_page((unsigned long)page);
+	kfree(myString);
+	return ret;
 }
 
 static int fp_version_read(char *page, char **start, off_t off, int count,
@@ -493,6 +575,8 @@ struct fp_procs
 } fp_procs[] =
 {
   { "vfd", NULL, vfd_write },
+  { "stb/fp/rtc", aotom_read_rtc, aotom_write_rtc },
+  { "stb/fp/rtc_offset", aotom_read_rtc_offset, aotom_write_rtc_offset },
   { "stb/fp/aotom", NULL, aotom_write },
   { "stb/fp/led0_pattern", NULL, led0_pattern_write },
   { "stb/fp/led1_pattern", NULL, led1_pattern_write },
