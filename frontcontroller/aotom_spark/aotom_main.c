@@ -252,7 +252,7 @@ static int run_draw_thread(struct vfd_ioctl_data *draw_data)
 	if (panel_version.DisplayInfo == YWPANEL_FP_DISPTYPE_LED) {
 		int saved = 0;
 		int len=draw_data->length;
-		if (len > 2 && data->data[2] == '.') saved = 1;
+		if (len > 2 && draw_data->data[2] == '.') saved = 1;
 		char buf[YWPANEL_width + saved + 1];
 		memset(buf, 0, sizeof(buf));
 		memset(buf, ' ', sizeof(buf) - 1);
