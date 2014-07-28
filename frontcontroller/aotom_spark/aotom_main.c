@@ -248,7 +248,17 @@ static int run_draw_thread(struct vfd_ioctl_data *draw_data)
 		draw_task = 0;
 	}
 
-	if ((draw_data->length < YWPANEL_width) || (panel_version.DisplayInfo == YWPANEL_FP_DISPTYPE_LED)) {
+	// Disable scroll for LED displays and crop to the first 4 chars
+	if (panel_version.DisplayInfo == YWPANEL_FP_DISPTYPE_LED) {
+		char buf[YWPANEL_width + 1];
+		memset(buf, 0, sizeof(buf));
+		memset(buf, ' ', sizeof(buf) - 1);
+		int len=draw_data->length;
+		if (len > YWPANEL_width) len=YWPANEL_width;
+		if (len) memcpy(buf, draw_data->data, len);
+		YWPANEL_VFD_ShowString(buf);
+	}
+	else if (draw_data->length < YWPANEL_width) {
 		char buf[DISPLAYWIDTH_MAX + 1];
 		memset(buf, 0, sizeof(buf));
 		memset(buf, ' ', sizeof(buf) - 1);
