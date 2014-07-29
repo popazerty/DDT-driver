@@ -100,7 +100,7 @@ extern int aotomSetBrightness(int level);
 extern int aotomGetVersion();
 
 static int rtc_offset = 0;
-static u32 wakup_time = 0;
+static u32 wakeup_time = 0;
 
 static int vfd_write(struct file *file, const char __user *buf,
                            unsigned long count, void *data)
@@ -284,7 +284,7 @@ static int wakeup_time_read(char *page, char **start, off_t off, int count, int 
 	if(NULL != page)
 	{
 		/* AOTOM needs time in local time so deduct rtc_offset for e2 */
-		len = sprintf(page,"%u\n", wakup_time-rtc_offset);
+		len = sprintf(page,"%u\n", wakeup_time-rtc_offset);
 	}
 	return len;
 }
