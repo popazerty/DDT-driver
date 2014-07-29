@@ -289,6 +289,19 @@ static int wakeup_time_read(char *page, char **start, off_t off, int count, int 
 	return len;
 }
 
+static int was_timer_wakeup_read(char *page, char **start, off_t off, int count, int *eof, void *data) {
+	int len = 0;
+	int res = 0;
+	YWPANEL_STARTUPSTATE_t State;
+	if(NULL != page)
+	{
+		YWPANEL_FP_GetStartUpState(&State);
+		if (State==YWPANEL_STARTUPSTATE_TIMER) res=1;
+		len = sprintf(page,"%d\n", res);
+	}
+	return len;
+}
+
 static int fp_version_read(char *page, char **start, off_t off, int count,
                           int *eof, void *data_unused)
 {
@@ -648,6 +661,7 @@ struct fp_procs
   { "stb/fp/led0_pattern", NULL, led0_pattern_write },
   { "stb/fp/led1_pattern", NULL, led1_pattern_write },
   { "stb/fp/wakeup_time", wakeup_time_read, wakeup_time_write },
+  { "stb/fp/was_timer_wakeup", was_timer_wakeup_read, null_write },
   { "stb/fp/version", fp_version_read, NULL },
   { "stb/power/standbyled", NULL, power_standbyled_write },
   { "stb/lcd/scroll_delay", NULL, null_write },
