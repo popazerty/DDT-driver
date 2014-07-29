@@ -44,6 +44,10 @@
  *             |
  *             +--- rtc_offset (w)
  *             |
+ *             +--- wakeup_time (rw)
+ *             |
+ *             +--- was_timer_wakeup (rw)
+ *             |
  *             +--- led0_pattern (w)
  *             |
  *             +--- led1_pattern (w)
@@ -96,6 +100,7 @@ extern int aotomSetBrightness(int level);
 extern int aotomGetVersion();
 
 static int rtc_offset = 0;
+static u32 wakup_time = 0;
 
 static int vfd_write(struct file *file, const char __user *buf,
                            unsigned long count, void *data)
@@ -242,6 +247,46 @@ out:
 	free_page((unsigned long)page);
 	kfree(myString);
 	return ret;
+}
+
+static int wakeup_time_write(struct file *file, const char __user *buffer, unsigned long count, void *data) {
+	char *page = NULL;
+	ssize_t ret = -ENOMEM;
+	int test = -1;
+	char *myString = kmalloc(count + 1, GFP_KERNEL);
+	printk("%s %ld - ", __FUNCTION__, count);
+	page = (char *)__get_free_page(GFP_KERNEL);
+	if (page)
+	{
+		ret = -EFAULT;
+		if (copy_from_user(page, buffer, count))
+			goto out;
+		strncpy(myString, page, count);
+		myString[count] = '\0';
+		printk("%s -> %s\n",__FUNCTION__, myString);
+		test = sscanf (myString,"%u",&wakeup_time);
+		if(0 < test)
+		{
+			/* AOTOM needs time in local time so add rtc_offset for time from e2 */
+			YWPANEL_FP_SetPowerOnTime(wakeup_time+rtc_offset);
+		}
+		/* always return count to avoid endless loop */
+		ret = count;
+	}
+out:
+	free_page((unsigned long)page);
+	kfree(myString);
+	return ret;
+}
+
+static int wakeup_time_read(char *page, char **start, off_t off, int count, int *eof, void *data) {
+	int len = 0;
+	if(NULL != page)
+	{
+		/* AOTOM needs time in local time so deduct rtc_offset for e2 */
+		len = sprintf(page,"%u\n", wakup_time-rtc_offset);
+	}
+	return len;
 }
 
 static int fp_version_read(char *page, char **start, off_t off, int count,
@@ -602,6 +647,7 @@ struct fp_procs
   { "stb/fp/aotom", NULL, aotom_write },
   { "stb/fp/led0_pattern", NULL, led0_pattern_write },
   { "stb/fp/led1_pattern", NULL, led1_pattern_write },
+  { "stb/fp/wakeup_time", wakeup_time_read, wakeup_time_write },
   { "stb/fp/version", fp_version_read, NULL },
   { "stb/power/standbyled", NULL, power_standbyled_write },
   { "stb/lcd/scroll_delay", NULL, null_write },
