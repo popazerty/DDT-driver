@@ -112,7 +112,7 @@ out:
 int proc_vmpeg_0_dst_left_read(char *page, char **start, off_t off, int count, int *eof, void *data)
 {
 	int len = 0;
-	int l, t, w, h;
+	int l = 0, t = 0, w = 0, h = 0;
 	int err, x, y;
 	void *fb;
 	struct fb_info *info;
@@ -257,7 +257,7 @@ out:
 int proc_vmpeg_0_dst_top_read(char *page, char **start, off_t off, int count, int *eof, void *data)
 {
 	int len = 0;
-	int l, t, w, h;
+	int l = 0, t = 0, w = 0, h = 0;
 	int err, x, y;
 	void* fb;
 	struct fb_info  *info;
@@ -403,7 +403,7 @@ out:
 int proc_vmpeg_0_dst_width_read(char *page, char **start, off_t off, int count, int *eof, void *data)
 {
 	int len = 0;
-	int l, t, w, h;
+	int l = 0, t = 0, w = 0, h = 0;
 	int err, x, y;
 	void* fb;
 	struct fb_info *info;
@@ -549,7 +549,7 @@ out:
 int proc_vmpeg_0_dst_height_read(char *page, char **start, off_t off, int count, int *eof, void *data)
 {
 	int len = 0;
-	int l, t, w, h;
+	int l = 0, t = 0, w = 0, h = 0;
 	int err, x, y;
 	void* fb;
 	struct fb_info *info;
