@@ -76,11 +76,9 @@ int proc_vmpeg_0_dst_left_write(struct file *file, const char __user *buf, unsig
 
 			if (err != 0)
 				printk("failed to get output window %d\n", err);
-
 #ifdef VERY_VERBOSE
 			else
 				printk("get output window to %d %d %d, %d ok\n", l, t, w, h);
-
 #endif
 
 			l = x * value / 720;
@@ -89,11 +87,9 @@ int proc_vmpeg_0_dst_left_write(struct file *file, const char __user *buf, unsig
 
 			if (err != 0)
 				printk("failed to set output window %d\n", err);
-
 #ifdef VERY_VERBOSE
 			else
 				printk("set output window ok %d %d %d %d\n", l, t, w, h);
-
 #endif
 
 			mutex_unlock(&(pContext->DvbContext->Lock));
@@ -112,7 +108,7 @@ out:
 int proc_vmpeg_0_dst_left_read(char *page, char **start, off_t off, int count, int *eof, void *data)
 {
 	int len = 0;
-	int l = 0, t = 0, w = 0, h = 0;
+	int l, t, w, h;
 	int err, x, y;
 	void *fb;
 	struct fb_info *info;
@@ -146,15 +142,11 @@ int proc_vmpeg_0_dst_left_read(char *page, char **start, off_t off, int count, i
 
 		err = DvbStreamGetOutputWindow(pContext->VideoStream, &l, &t, &w, &h);
 
-		if (err != 0) {
+		if (err != 0)
 			printk("failed to get output window %d\n", err);
-			l = t = w = h = 0;
-		}
-
 #ifdef VERY_VERBOSE
 		else
 			printk("get output window to %d %d %d, %d ok\n", l, t, w, h);
-
 #endif
 
 		mutex_unlock(&(pContext->DvbContext->Lock));
@@ -223,11 +215,9 @@ int proc_vmpeg_0_dst_top_write(struct file *file, const char __user *buf, unsign
 
 			if (err != 0)
 				printk("failed to get output window %d\n", err);
-
 #ifdef VERY_VERBOSE
 			else
 				printk("get output window to %d %d %d, %d ok\n", l, t, w, h);
-
 #endif
 
 			t = y * value / 576;
@@ -259,7 +249,7 @@ out:
 int proc_vmpeg_0_dst_top_read(char *page, char **start, off_t off, int count, int *eof, void *data)
 {
 	int len = 0;
-	int l = 0, t = 0, w = 0, h = 0;
+	int l, t, w, h;
 	int err, x, y;
 	void* fb;
 	struct fb_info  *info;
@@ -293,15 +283,11 @@ int proc_vmpeg_0_dst_top_read(char *page, char **start, off_t off, int count, in
 
 		err = DvbStreamGetOutputWindow(pContext->VideoStream, &l, &t, &w, &h);
 
-		if (err != 0) {
+		if (err != 0)
 			printk("failed to get output window %d\n", err);
-			l = t = w = h = 0;
-		}
-
 #ifdef VERY_VERBOSE
 		else
 			printk("get output window to %d %d %d, %d ok\n", l, t, w, h);
-
 #endif
 
 		mutex_unlock(&(pContext->DvbContext->Lock));
@@ -371,11 +357,9 @@ int proc_vmpeg_0_dst_width_write(struct file *file, const char __user *buf, unsi
 
 			if (err != 0)
 				printk("failed to get output window %d\n", err);
-
 #ifdef VERY_VERBOSE
 			else
 				printk("get output window to %d %d %d, %d ok\n", l, t, w, h);
-
 #endif
 
 			w = x * value / 720;
@@ -384,11 +368,9 @@ int proc_vmpeg_0_dst_width_write(struct file *file, const char __user *buf, unsi
 
 			if (err != 0)
 				printk("failed to set output window %d\n", err);
-
 #ifdef VERY_VERBOSE
 			else
 				printk("set output window ok %d %d %d %d\n", l, t, w, h);
-
 #endif
 
 			mutex_unlock(&(pContext->DvbContext->Lock));
@@ -407,7 +389,7 @@ out:
 int proc_vmpeg_0_dst_width_read(char *page, char **start, off_t off, int count, int *eof, void *data)
 {
 	int len = 0;
-	int l = 0, t = 0, w = 0, h = 0;
+	int l, t, w, h;
 	int err, x, y;
 	void* fb;
 	struct fb_info *info;
@@ -441,15 +423,11 @@ int proc_vmpeg_0_dst_width_read(char *page, char **start, off_t off, int count, 
 
 		err = DvbStreamGetOutputWindow(pContext->VideoStream, &l, &t, &w, &h);
 
-		if (err != 0) {
+		if (err != 0)
 			printk("failed to get output window %d\n", err);
-			l = t = w = h = 0;
-		}
-
 #ifdef VERY_VERBOSE
 		else
 			printk("get output window to %d %d %d, %d ok\n", l, t, w, h);
-
 #endif
 
 		mutex_unlock(&(pContext->DvbContext->Lock));
@@ -555,7 +533,7 @@ out:
 int proc_vmpeg_0_dst_height_read(char *page, char **start, off_t off, int count, int *eof, void *data)
 {
 	int len = 0;
-	int l = 0, t = 0, w = 0, h = 0;
+	int l, t, w, h;
 	int err, x, y;
 	void* fb;
 	struct fb_info *info;
@@ -589,15 +567,11 @@ int proc_vmpeg_0_dst_height_read(char *page, char **start, off_t off, int count,
 
 		err = DvbStreamGetOutputWindow(pContext->VideoStream, &l, &t, &w, &h);
 
-		if (err != 0) {
+		if (err != 0)
 			printk("failed to get output window %d\n", err);
-			l = t = w = h = 0;
-		}
-
 #ifdef VERY_VERBOSE
 		else
 			printk("get output window to %d %d %d, %d ok\n", l, t, w, h);
-
 #endif
 
 		mutex_unlock(&(pContext->DvbContext->Lock));
