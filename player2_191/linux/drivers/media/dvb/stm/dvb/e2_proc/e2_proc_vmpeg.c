@@ -142,8 +142,10 @@ int proc_vmpeg_0_dst_left_read(char *page, char **start, off_t off, int count, i
 
 		err = DvbStreamGetOutputWindow(pContext->VideoStream, &l, &t, &w, &h);
 
-		if (err != 0)
+		if (err != 0) {
 			printk("failed to get output window %d\n", err);
+			l = t = w = h = 0;
+		}
 #ifdef VERY_VERBOSE
 		else
 			printk("get output window to %d %d %d, %d ok\n", l, t, w, h);
@@ -283,8 +285,10 @@ int proc_vmpeg_0_dst_top_read(char *page, char **start, off_t off, int count, in
 
 		err = DvbStreamGetOutputWindow(pContext->VideoStream, &l, &t, &w, &h);
 
-		if (err != 0)
+		if (err != 0) {
 			printk("failed to get output window %d\n", err);
+			l = t = w = h = 0;
+		}
 #ifdef VERY_VERBOSE
 		else
 			printk("get output window to %d %d %d, %d ok\n", l, t, w, h);
@@ -423,8 +427,10 @@ int proc_vmpeg_0_dst_width_read(char *page, char **start, off_t off, int count, 
 
 		err = DvbStreamGetOutputWindow(pContext->VideoStream, &l, &t, &w, &h);
 
-		if (err != 0)
+		if (err != 0) {
 			printk("failed to get output window %d\n", err);
+			l = t = w = h = 0;
+		}
 #ifdef VERY_VERBOSE
 		else
 			printk("get output window to %d %d %d, %d ok\n", l, t, w, h);
@@ -567,8 +573,10 @@ int proc_vmpeg_0_dst_height_read(char *page, char **start, off_t off, int count,
 
 		err = DvbStreamGetOutputWindow(pContext->VideoStream, &l, &t, &w, &h);
 
-		if (err != 0)
+		if (err != 0) {
 			printk("failed to get output window %d\n", err);
+			l = t = w = h = 0;
+		}
 #ifdef VERY_VERBOSE
 		else
 			printk("get output window to %d %d %d, %d ok\n", l, t, w, h);
