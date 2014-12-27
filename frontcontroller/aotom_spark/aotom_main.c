@@ -970,9 +970,11 @@ static struct platform_driver aotom_rtc_driver = {
 extern void create_proc_fp(void);
 extern void remove_proc_fp(void);
 
+static struct class *vfd_class = 0;
+
 static int __init aotom_init_module(void)
 {
-	int i;
+	int i, result;
 
 	dprintk(5, "%s >\n", __func__);
 
@@ -990,6 +992,8 @@ static int __init aotom_init_module(void)
 
 	if (register_chrdev(VFD_MAJOR,"VFD",&vfd_fops))
 		printk("unable to get major %d for VFD\n",VFD_MAJOR);
+	vfd_class = class_create(THIS_MODULE,"VFD");
+	device_create(vfd_class, NULL, MKDEV(VFD_MAJOR,0),NULL,"dbox!oled0");	
 
 	sema_init(&write_sem, 1);
 	sema_init(&draw_thread_sem, 1);
@@ -1054,6 +1058,9 @@ static void __exit aotom_cleanup_module(void)
 	dprintk(5, "[BTN] unloading ...\n");
 	button_dev_exit();
 
+	device_destroy(vfd_class, MKDEV(VFD_MAJOR,0));
+	class_unregister(vfd_class);
+	class_destroy(vfd_class);
 	unregister_chrdev(VFD_MAJOR,"VFD");
 	YWPANEL_VFD_Term();
 	printk("Fulan front panel module unloading\n");
