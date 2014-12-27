@@ -125,7 +125,7 @@ static int vfd_write(struct file *file, const char __user *buf,
 // String format: fxy
 // f is "l" (for led) or "i" (for icons)
 // x is 0/1 and indicates if the led/icon must be off or on
-// y is the led/icon number (between 0 and LASTLED-1 for leds; between 1 and 46, for icons, with y==46, all the icons are set)
+// y is the led/icon number (between 0 and LED_COUNT-1 for leds; between 1 and 46, for icons, with y==46, all the icons are set)
 static int aotom_write(struct file *file, const char __user *buf,
                            unsigned long count, void *data)
 {
@@ -148,10 +148,10 @@ static int aotom_write(struct file *file, const char __user *buf,
         value = (int)simple_strtol(page+2, NULL, 10);
         if (page[0] == 'l') {
           if (page[1] == '0') {
-            if ((value>=0)&&(value<LASTLED)) aotomSetLed(value,0);
+            if ((value>=0)&&(value<LED_COUNT)) aotomSetLed(value,0);
           }
           else if (page[1] == '1') {
-            if ((value>=0)&&(value<LASTLED)) aotomSetLed(value,1);
+            if ((value>=0)&&(value<LED_COUNT)) aotomSetLed(value,1);
           }
         }
         else if (page[0] == 'i') {

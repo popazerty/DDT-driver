@@ -381,7 +381,7 @@ int aotomSetLed(int which, int on)
 {
 	int  res = 0;
 	dprintk(5, "%s > %d, %d\n", __func__, which, on);
-	if (which < 0 || which >= LASTLED)
+	if (which < 0 || which >= LED_COUNT)
 	{
 		printk("VFD/AOTOM led number out of range %d\n", which);
 		return -EINVAL;
@@ -396,7 +396,7 @@ int aotomSetLed(int which, int on)
 int aotomEnableLed(int which, int on)
 {
 	int  res = 0;
-	if (which < 0 || which >= LASTLED)
+	if (which < 0 || which >= LED_COUNT)
 	{
 		printk("VFD/AOTOM led number out of range %d\n", which);
 		return -EINVAL;
