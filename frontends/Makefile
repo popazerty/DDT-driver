@@ -18,11 +18,9 @@ CCFLAGSY += -I$(TREE_ROOT)/frontends/spark7162/stv0367
 CCFLAGSY += -I$(TREE_ROOT)/frontends/spark7162/stv0367/stv0367qam
 CCFLAGSY += -I$(TREE_ROOT)/frontends/spark7162/stv0367/stv0367ter
 CCFLAGSY += -I$(TREE_ROOT)/frontends/spark7162/6158
-CCFLAGSY += -I$(TREE_ROOT)/frontends/spark7162/6158/include
 CCFLAGSY += -I$(TREE_ROOT)/frontends/spark7162/tuner
 CCFLAGSY += -I$(TREE_ROOT)/frontends/spark7162/tuner/MxL301_Ext
 CCFLAGSY += -I$(TREE_ROOT)/frontends/spark7162/tuner/MxL603
-
 CCFLAGSY += -I$(TREE_ROOT)/frontends/spark_dvbapi5
 CCFLAGSY += -I$(TREE_ROOT)/frontends/spark_common
 
@@ -36,11 +34,7 @@ CCFLAGSY += -DMXL603=1
 CCFLAGSY += -DANY_TUNER=0
 endif
 
-ifneq (,$(findstring 2.6.3,$(KERNELVERSION)))
 ccflags-y += $(CCFLAGSY)
-else
-CFLAGS += $(CCFLAGSY)
-endif
 
 # >= 2.6.30
 ifdef HL101
@@ -90,9 +84,9 @@ spark7162-objs += spark7162/D3501.o
 spark7162-objs += spark_dvbapi5/ix7306.o
 spark7162-objs += spark_common/vz7903.o
 spark7162-objs += spark_common/dvb_dummy_fe.o
-spark7162-objs += base/sharp7803.o
-spark7162-objs += base/sharp6465.o
-spark7162-objs += base/sharp5469c.o
+spark7162-objs += spark7162/base/sharp7803.o
+spark7162-objs += spark7162/base/sharp6465.o
+spark7162-objs += spark7162/base/sharp5469c.o
 
 spark7162-objs += spark7162/stv0367/D0367.o
 spark7162-objs += spark7162/stv0367/D0367ter.o
@@ -347,7 +341,16 @@ obj-m += stv090x.o
 endif
 
 ifdef ARIVALINK200
-#cx24116-objs += cx24116_dvbapi5/cx24116.o
-cx24116-objs += cx24116/cx24116.o
+cx24116-objs += cx24116_dvbapi5/cx24116.o
 obj-m += cx24116.o
+endif
+
+ifdef SAGEMCOM88
+ifeq (,$(wildcard $(DRIVER_TOPDIR)/sagemcom88 ))
+fe-core-objs +=        sagemcom88/ix7306.o
+fe-core-objs +=        sagemcom88/stv090x.o
+fe-core-objs +=        sagemcom88/stv6110x.o
+fe-core-objs +=        sagemcom88/core.o
+obj-m += fe-core.o
+endif
 endif
