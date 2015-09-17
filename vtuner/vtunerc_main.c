@@ -1,7 +1,7 @@
 /*
  * vtunerc: Virtual adapter driver
  *
- * Copyright (C) 2010-11 Honza Petrous <jpetrous@smartimp.cz>
+ * Copyright (C) 2010-12 Honza Petrous <jpetrous@smartimp.cz>
  * [Created 2010-03-23]
  * Sponsored by Smartimp s.r.o. for its NessieDVB.com box
  *
@@ -103,10 +103,10 @@ static void pidtab_copy_to_msg(struct vtunerc_ctx *ctx,
 				struct vtuner_message *msg)
 {
 	int i;
-
-	for (i = 0; i < (MAX_PIDTAB_LEN - 1); i++)
+	
+	for (i = 0; i < MAX_PIDTAB_LEN ; i++)
 		msg->body.pidlist[i] = ctx->pidtab[i]; /*TODO: optimize it*/
-	msg->body.pidlist[MAX_PIDTAB_LEN - 1] = 0;
+	/* msg->body.pidlist[MAX_PIDTAB_LEN - 1] = 0; */
 }
 
 static int vtunerc_start_feed(struct dvb_demux_feed *feed)
@@ -131,8 +131,12 @@ static int vtunerc_start_feed(struct dvb_demux_feed *feed)
 		return -EINVAL;
 	}
 
-	/* organize PID list table */
+	if (feed->pid >= 0x2000 ) {
+	  printk(KERN_ERR "vtunerc%d: full mux not supported\n",ctx->idx);
+	  return -EINVAL;
+	}
 
+	/* organize PID list table */
 	if (pidtab_find_index(ctx->pidtab, feed->pid) < 0) {
 		pidtab_add_pid(ctx->pidtab, feed->pid);
 
@@ -298,7 +302,7 @@ static int __init vtunerc_init(void)
 
 		ctx->dvb_adapter.priv = ctx;
 
-		/*
+#if 0
 		memset(&ctx->demux, 0, sizeof(ctx->demux));
 		dvbdemux = &ctx->demux;
 		dvbdemux->priv = ctx;
@@ -333,7 +337,7 @@ static int __init vtunerc_init(void)
 		ret = dmx->connect_frontend(dmx, &ctx->hw_frontend);
 		if (ret < 0)
 			goto err_remove_mem_frontend;
-		*/
+#endif
 
 		sema_init(&ctx->xchange_sem, 1);
 		sema_init(&ctx->ioctl_sem, 1);
@@ -350,12 +354,15 @@ static int __init vtunerc_init(void)
 			sprintf(procfilename, VTUNERC_PROC_FILENAME,
 					ctx->idx);
 			ctx->procname = my_strdup(procfilename);
+#if 0
 			if (create_proc_read_entry(ctx->procname, 0, NULL,
 							vtunerc_read_proc,
 							ctx) == 0)
 				printk(KERN_WARNING
 					"vtunerc%d: Unable to register '%s' proc file\n",
 					ctx->idx, ctx->procname);
+#endif
+
 		}
 #endif
 	}
@@ -367,7 +374,7 @@ static int __init vtunerc_init(void)
 
 out:
 	return ret;
-/*
+#if 0
 	dmx->disconnect_frontend(dmx);
 err_remove_mem_frontend:
 	dmx->remove_frontend(dmx, &ctx->mem_frontend);
@@ -377,7 +384,7 @@ err_dvb_dmxdev_release:
 	dvb_dmxdev_release(&ctx->dmxdev);
 err_dvb_dmx_release:
 	dvb_dmx_release(dvbdemux);
-*/
+#endif
 err_dvb_unregister_adapter:
 	dvb_unregister_adapter(&ctx->dvb_adapter);
 err_kfree:
@@ -405,7 +412,7 @@ static void __exit vtunerc_exit(void)
 
 		vtunerc_frontend_clear(ctx);
 
-		/*
+#if 0
 		dvbdemux = &ctx->demux;
 		dmx = &dvbdemux->dmx;
 
@@ -414,7 +421,7 @@ static void __exit vtunerc_exit(void)
 		dmx->remove_frontend(dmx, &ctx->hw_frontend);
 		dvb_dmxdev_release(&ctx->dmxdev);
 		dvb_dmx_release(dvbdemux);
-		*/
+#endif
 		dvb_unregister_adapter(&ctx->dvb_adapter);
 
 		// free allocated buffer

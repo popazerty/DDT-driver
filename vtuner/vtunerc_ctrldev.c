@@ -140,7 +140,9 @@ static int vtunerc_ctrldev_close(struct inode *inode, struct file *filp)
 {
 	struct vtunerc_ctx *ctx = filp->private_data;
 	int minor;
+#if 0
 	struct vtuner_message fakemsg;
+#endif
 
 	dprintk(ctx, "closing (fd_opened=%d)\n", ctx->fd_opened);
 
@@ -155,6 +157,10 @@ static int vtunerc_ctrldev_close(struct inode *inode, struct file *filp)
 	dprintk(ctx, "faked response\n");
 	wake_up_interruptible(&ctx->ctrldev_wait_response_wq);
 
+	/* hack: module hangs if application is killed by SIGSEGV 
+	 * possible solution: check for zombie status? 
+	 */
+#if 0
 	/* clear pidtab */
 	dprintk(ctx, "sending pidtab cleared ...\n");
 	if (down_interruptible(&ctx->xchange_sem))
@@ -163,6 +169,7 @@ static int vtunerc_ctrldev_close(struct inode *inode, struct file *filp)
 	vtunerc_ctrldev_xchange_message(ctx, &fakemsg, 0);
 	up(&ctx->xchange_sem);
 	dprintk(ctx, "pidtab clearing done\n");
+#endif
 
 	return 0;
 }
@@ -407,7 +414,7 @@ void vtunerc_unregister_ctrldev(struct vtunerc_config *config)
 int vtunerc_ctrldev_xchange_message(struct vtunerc_ctx *ctx,
 		struct vtuner_message *msg, int wait4response)
 {
-	//dprintk(ctx, "XCH_MSG: %d: entered\n", msg->type);
+	dprintk(ctx, "XCH_MSG: %d: entered\n", msg->type);
 	if (down_interruptible(&ctx->xchange_sem))
 		return -ERESTARTSYS;
 
@@ -416,7 +423,7 @@ int vtunerc_ctrldev_xchange_message(struct vtunerc_ctx *ctx,
 		up(&ctx->xchange_sem);
 		return 0;
 	}
-	//dprintk(ctx, "XCH_MSG: %d: continue\n", msg->type);
+	dprintk(ctx, "XCH_MSG: %d: continue\n", msg->type);
 
 #if 0
 	BUG_ON(ctx->ctrldev_request.type != -1);
@@ -436,7 +443,7 @@ int vtunerc_ctrldev_xchange_message(struct vtunerc_ctx *ctx,
 
 	if (wait_event_interruptible(ctx->ctrldev_wait_response_wq,
 				ctx->ctrldev_response.type != -1)) {
-		//dprintk(ctx, "XCH_MSG: %d: wait_event interrupted\n", msg->type);
+		dprintk(ctx, "XCH_MSG: %d: wait_event interrupted\n", msg->type);
 		ctx->ctrldev_request.type = -1;
 		up(&ctx->xchange_sem);
 		return -ERESTARTSYS;
@@ -444,7 +451,7 @@ int vtunerc_ctrldev_xchange_message(struct vtunerc_ctx *ctx,
 
 	BUG_ON(ctx->ctrldev_response.type == -1);
 
-	//dprintk(ctx, "XCH_MSG: %d -> %d (DONE)\n", msg->type, ctx->ctrldev_response.type);
+	dprintk(ctx, "XCH_MSG: %d -> %d (DONE)\n", msg->type, ctx->ctrldev_response.type);
 	memcpy(msg, &ctx->ctrldev_response, sizeof(struct vtuner_message));
 	ctx->ctrldev_response.type = -1;
 

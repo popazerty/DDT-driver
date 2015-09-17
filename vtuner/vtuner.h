@@ -110,5 +110,10 @@ struct vtuner_message {
 #define VTUNER_SET_NUM_MODES	_IOW(VTUNER_MAJOR, 7, int)
 #define VTUNER_SET_MODES	_IOW(VTUNER_MAJOR, 8, char *)
 
+
+/* hack */
+#undef CONFIG_PROC_FS
+
+
 #endif
 
