@@ -1035,10 +1035,6 @@ int pti_hal_set_source ( int session_handle, const dmx_source_t source )
 			int old_session;
 			int old_source = -1;
 			old_session = internal->demux_tag[source];
-			if (old_session == session_handle)
-			{
-				return 1;
-			}
 			printk("before\n");
 			for (i = 0; i < TAG_COUNT; i++)
 			{
@@ -1046,6 +1042,10 @@ int pti_hal_set_source ( int session_handle, const dmx_source_t source )
 						i, (int)internal->demux[i]);
 				printk("internal->demux_tag[%d] = %d\n",
 						i, internal->demux_tag[i]);
+			}
+			if (old_session == session_handle)
+			{
+        		return 1;
 			}
 			for (i = 0; i < TAG_COUNT; i++)
 			{

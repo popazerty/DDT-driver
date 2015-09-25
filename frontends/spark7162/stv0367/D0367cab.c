@@ -796,6 +796,7 @@ _DEBUG
 		/* update results */
 _DEBUG
 		printk("TUNER_STATUS_LOCKED #######################\n");
+		//Inst->Status = TUNER_STATUS_LOCKED;
 		//pResult->Frequency_kHz = pIntParams->DemodResult.Frequency_kHz;
 		//pResult->SymbolRate_Bds = pIntParams->DemodResult.SymbolRate_Bds;
 		//pResult->SpectInv = pIntParams->DemodResult.SpectInv;
