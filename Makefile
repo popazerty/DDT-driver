@@ -263,7 +263,6 @@ obj-y += i2c_spi/
 obj-y += cec/
 obj-y += dvbt/as102/
 obj-y += dvbt/siano/
-obj-y += vtuner/
 endif
 
 ifdef OCTAGON1008
