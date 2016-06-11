@@ -72,19 +72,19 @@ enum
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30)
 static const struct i2c_device_id avs_id[] = {
-        { "ak4705", AK4705 },
-        { "ak4708", AK4708 },
-        { "stv6412", STV6412 },
-        { "stv6417", STV6417 },
-        { "stv6418", STV6418 },
-        { "stv6419", STV6419 },
-        { "cxa2161", CXA2161 },
-        { "vip2_avs", VIP2_AVS },
-		{ "vip1_avs", VIP1_AVS },
-        { "fake_avs", FAKE_AVS },
-        { "avs_pio", AVS_PIO },
-        { "avs_none", AVS_NONE },
-        { }
+	{ "ak4705", AK4705 },
+	{ "ak4708", AK4708 },
+	{ "stv6412", STV6412 },
+	{ "stv6417", STV6417 },
+	{ "stv6418", STV6418 },
+	{ "stv6419", STV6419 },
+	{ "cxa2161", CXA2161 },
+	{ "vip2_avs", VIP2_AVS },
+	{ "vip1_avs", VIP1_AVS },
+	{ "fake_avs", FAKE_AVS },
+	{ "avs_pio", AVS_PIO },
+	{ "avs_none", AVS_NONE },
+	{ }
 };
 MODULE_DEVICE_TABLE(i2c, avs_id);
 #endif
@@ -96,14 +96,38 @@ static char *type = "ak4705";
  * Addresses to scan
  */
 static unsigned short normal_i2c[] = {
-#if defined(HOMECAST5101)
-	I2C_ADDRESS_CXA2161, /* cxa2161, 0x48 */
-#elif defined(UFS922) || defined(CUBEREVO) || defined(VITAMIN_HD5000) \
-   || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_2000HD)
+#if defined(UFS922) \
+ || defined(CUBEREVO) \
+ || defined(VITAMIN_HD5000) \
+ || defined(CUBEREVO_MINI) \
+ || defined(CUBEREVO_MINI2) \
+ || defined(CUBEREVO_9500HD) \
+ || defined(CUBEREVO_2000HD)
 	0x4a, /* stv6412" */
-#elif defined(UFC960) || defined(FORTIS_HDBOX) || defined(TF7700) || defined(HL101) || defined(UFS912) || defined(UFS913) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(ADB_BOX) || defined(CUBEREVO_3000HD)
+#elif defined(UFC960) \
+ || defined(FORTIS_HDBOX) \
+ || defined(TF7700) \
+ || defined(HL101) \
+ || defined(UFS912) \
+ || defined(UFS913) \
+ || defined(ATEVIO7500) \
+ || defined(IPBOX9900) \
+ || defined(IPBOX99) \
+ || defined(ADB_BOX) \
+ || defined(CUBEREVO_3000HD)
 	0x4b, /* stv6412 / stv6417 / stv6418 */
-#elif defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_250HD) || defined(IPBOX55) || defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(ARIVALINK200)
+#elif defined(CUBEREVO_MINI_FTA) \
+ || defined(CUBEREVO_250HD) \
+ || defined(IPBOX55) \
+ || defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7819) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530) \
+ || defined(ARIVALINK200)
 	/* CUBEREVO_MINI_FTA does not register */
 	/* CUBEREVO_250HD seems to use fake_avs, but does not register */
 	0,
@@ -220,7 +244,18 @@ static int avs_command_ioctl(struct i2c_client *client, unsigned int cmd, void *
 {
 	int err = 0;
 
-#if !defined(VIP1_V2) && !defined(VIP2_V1) && !defined(SPARK) && !defined(SPARK7162) && !defined(HS7110) && !defined(HS7119) && !defined(HS7810A) && !defined(HS7819) && !defined(ATEMIO520) && !defined(ATEMIO530) // none i2c avs !!!
+#if !defined(VIP1_V2) \
+ && !defined(VIP2_V1) \
+ && !defined(SPARK) \
+ && !defined(SPARK7162) \
+ && !defined(HS7110) \
+ && !defined(HS7119) \
+ && !defined(HS7420) \
+ && !defined(HS7429) \
+ && !defined(HS7810A) \
+ && !defined(HS7819) \
+ && !defined(ATEMIO520) \
+ && !defined(ATEMIO530) // none i2c avs !!!
 	if (!client)
 		return -1;
 #endif
@@ -250,7 +285,18 @@ int avs_command_kernel(unsigned int cmd, void *arg)
 {
 	int err = 0;
 
-#if !defined(VIP1_V2) && !defined(VIP2_V1) && !defined(SPARK) && !defined(SPARK7162) && !defined(HS7110) && !defined(HS7119) && !defined(HS7810A) && !defined(HS7819) && !defined(ATEMIO520) && !defined(ATEMIO530) // i2c avs !!!
+#if !defined(VIP1_V2) \
+ && !defined(VIP2_V1) \
+ && !defined(SPARK) \
+ && !defined(SPARK7162) \
+ && !defined(HS7110) \
+ && !defined(HS7119) \
+ && !defined(HS7420) \
+ && !defined(HS7429) \
+ && !defined(HS7810A) \
+ && !defined(HS7819) \
+ && !defined(ATEMIO520) \
+ && !defined(ATEMIO530) // i2c avs !!!
 	struct i2c_client *client = avs_client;
 	if (!client)
 		return -1;
@@ -260,7 +306,18 @@ int avs_command_kernel(unsigned int cmd, void *arg)
 
 	switch(devType)
 	{
-#if defined(VIP1_V2) || defined(VIP2_V1) || defined(SPARK) || defined(SPARK7162) || defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) // none i2c avs !!!
+#if defined(VIP1_V2) \
+ || defined(VIP2_V1) \
+ || defined(SPARK) \
+ || defined(SPARK7162) \
+ || defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7819) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530) // none i2c avs !!!
 	case AVS_PIO: 		err = avs_pio_command_kernel(cmd, arg); 	break;
 	case VIP2_AVS: 		err = vip2_avs_command_kernel(cmd, arg); 	break;
 	case VIP1_AVS: 		err = vip1_avs_command_kernel(cmd, arg); 	break;

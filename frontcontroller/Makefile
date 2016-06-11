@@ -1,12 +1,13 @@
 TREE_ROOT?=$(DRIVER_TOPDIR)/
 CONFIG_STGFB_PATH?=$(DRIVER_TOPDIR)/stgfb/stmfb
-CCFLAGSY += -I$(TREE_ROOT)/linux/include/linux/stm/
-CCFLAGSY += -I$(TREE_ROOT)/linux/drivers/media/video/stm/
+CCFLAGSY += -I$(TREE_ROOT)/player2/linux/include/linux/stm
+CCFLAGSY += -I$(TREE_ROOT)/player2/linux/drivers/media/video/stm
 CCFLAGSY += -I$(KERNEL_LOCATION)/drivers/media/dvb/dvb-core
 CCFLAGSY += -I$(CONFIG_STGFB_PATH)/include
 CCFLAGSY += -DDEBUG_DVB
 CCFLAGSY += -I$(TREE_ROOT)/include
 CCFLAGSY += -I$(TREE_ROOT)/frontcontroller/include
+
 ifneq (,$(findstring 2.6.3,$(KERNELVERSION)))
 ccflags-y += $(CCFLAGSY)
 else
@@ -17,12 +18,12 @@ ifdef UFS910
 obj-y += vfd/
 endif
 
-ifdef HOMECAST5101
-obj-y += vfd_hs5101/
+ifdef UFS912
+obj-y += micom/
 endif
 
-ifdef FORTIS_HDBOX
-obj-y += nuvoton/
+ifdef UFS913
+obj-y += micom/
 endif
 
 ifdef UFS922
@@ -55,14 +56,6 @@ obj-y += adb_box_vfd/front_bska/
 obj-y += adb_box_vfd/front_bsla/
 endif
 
-ifdef UFS912
-obj-y += micom/
-endif
-
-ifdef UFS913
-obj-y += micom/
-endif
-
 ifdef SPARK
 obj-y += aotom_spark/
 endif
@@ -75,6 +68,10 @@ ifdef OCTAGON1008
 obj-y += nuvoton/
 endif
 
+ifdef FORTIS_HDBOX
+obj-y += nuvoton/
+endif
+
 ifdef ATEVIO7500
 obj-y += nuvoton/
 endif
@@ -83,11 +80,19 @@ ifdef HS7110
 obj-y += nuvoton/
 endif
 
-ifdef HS7810A
+ifdef HS7119
 obj-y += nuvoton/
 endif
 
-ifdef HS7119
+ifdef HS7420
+obj-y += nuvoton/
+endif
+
+ifdef HS7429
+obj-y += nuvoton/
+endif
+
+ifdef HS7810A
 obj-y += nuvoton/
 endif
 

@@ -17,8 +17,7 @@
 
 #include "front_bska.h"
 
-//static int buttoninterval = HZ / 4; //1000/4=250ms
-static int buttoninterval = HZ / 3;
+static int buttoninterval = 350/*ms*/;
 static struct timer_list button_timer;
 
 static char *button_driver_name = "NBOX frontpanel buttons";
@@ -243,9 +242,14 @@ static int PT6958_ShowBuf(unsigned char *data, unsigned char len)
 
 	while ((i< len) && (wlen < 8))
 	{
-		if (data[i] == '\n' || data[i] == 0x0d) 
+		if (data[i] == '\n' || data[i] == 0) 
 		{
-			DBG("[%s] SPECIAL_CHAR (0x%X)\n", __func__, data[i]);
+			DBG("[%s] BREAK CHAR detected (0x%X)\n", __func__, data[i]);
+			break;
+		}
+		else if (data[i] < 0x20)
+		{
+			DBG("[%s] NON_PRINTABLE_CHAR '0x%X'\n", __func__, data[i]);
 			i++;
 		}
 		else if (data[i] < 0x80)
