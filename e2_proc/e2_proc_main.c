@@ -52,6 +52,10 @@
  *  |             |
  *  |             --------- aspect_choices
  *  |             |
+ *  |             --------- hdmi_colorspace
+ *  |             |
+ *  |             --------- hdmi_colorspace_choices
+ *  |             |
  *  |             --------- force_dvi
  *  |             |
  *  |             --------- policy
@@ -188,6 +192,8 @@
  *  |               --------- progressive
  *  |               |
  *  |               --------- aspect
+ *  |               |
+ *  |               --------- pep_apply
  *  |
  *  ---------- fb
  *  |           |
@@ -624,6 +630,8 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/video/alpha"                                                  , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/video/aspect"                                                 , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/video/aspect_choices"                                         , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/video/hdmi_colorspace"                                        , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/video/hdmi_colorspace_choices"                                , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/video/force_dvi"                                              , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/video/policy"                                                 , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/video/policy_choices"                                         , NULL, NULL, NULL, NULL, ""},
@@ -721,6 +729,7 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/vmpeg/0/xres"                                                 , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/vmpeg/0/aspect"                                               , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/vmpeg/0/framerate"                                            , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/vmpeg/0/pep_apply"                                            , NULL, NULL, NULL, NULL, ""},
 
 	{cProcDir  , "stb/vmpeg/1"                                                      , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/vmpeg/1/dst_apply"                                            , NULL, NULL, NULL, NULL, ""},
@@ -733,6 +742,7 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/vmpeg/1/xres"                                                 , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/vmpeg/1/aspect"                                               , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/vmpeg/1/framerate"                                            , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/vmpeg/1/pep_apply"                                            , NULL, NULL, NULL, NULL, ""},
 
 	{cProcDir  , "stb/hdmi"                                                         , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/hdmi/bypass_edid_checking"                                    , NULL, NULL, NULL, NULL, ""},
