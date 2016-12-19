@@ -39,7 +39,7 @@
 
 #define _ICS_INIT_PORTS			16	/* Initial # of local Ports per CPU */
 #define _ICS_MAX_PORTS			256	/* Maximum # of local Ports per CPU */
-#define _ICS_MAX_REGIONS		48	/* Maximum # of mapped regions per CPU */
+#define _ICS_MAX_REGIONS		96	/* Maximum # of mapped regions per CPU */
 #define _ICS_MAX_DYN_MOD		16	/* Maximum # of dynamic modules per CPU */
 
 #define _ICS_CONNECT_TIMEOUT		30000	/* Inter-cpu connection timeout (in ms) */
@@ -54,7 +54,7 @@
 #define _ICS_NSRV_NUM_ENTRIES		128	/* Default initial name table size */
 
 #define _ICS_WATCHDOG_INTERVAL		100	/* Watchdog timeout/timer interval in ms */
-#define _ICS_WATCHDOG_FAILURES		2	/* Number of timeout intervals before failure report */
+#define _ICS_WATCHDOG_FAILURES		3	  /* Number of timeout intervals before failure report */
 
 #define _ICS_MAX_PATHNAME_LEN	       	63	/* Maximum pathname length (see also ICS_MSG_INLINE_DATA) */
 

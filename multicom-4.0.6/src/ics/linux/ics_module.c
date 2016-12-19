@@ -467,7 +467,7 @@ extern void slaveResetRegMap ();
 	return 0;
 }
 
-static int ics_probe (struct platform_device *pdev)
+static int __devinit ics_probe (struct platform_device *pdev)
 {
 	int res = 0;
 	ICS_ERROR err = ICS_SUCCESS;
@@ -572,7 +572,7 @@ error:
 	return -ENODEV;
 }
 
-static int __exit ics_remove (struct platform_device *pdev) 
+static int __devexit ics_remove (struct platform_device *pdev) 
 {
 	/* Remove the per CPU procfs entries */
 	ics_remove_procfs(ics_cpu_mask());
@@ -586,7 +586,7 @@ static struct platform_driver ics_driver = {
 	.driver.name  = MODULE_NAME,
 	.driver.owner = THIS_MODULE,
 	.probe        = ics_probe,
-	.remove       = __exit_p(ics_remove),
+	.remove       = __devexit_p(ics_remove),
 };
 
 static void ics_release (struct device *dev) {}
