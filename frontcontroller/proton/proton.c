@@ -63,8 +63,8 @@ static short paramDebug = 0;
 #define VFD_CS_CLR() {udelay(10); stpio_set_pin(cfg.cs, 0);}
 #define VFD_CS_SET() {udelay(10); stpio_set_pin(cfg.cs, 1);}
 
-#define VFD_CLK_CLR() {stpio_set_pin(cfg.clk, 0);udelay(1);}
-#define VFD_CLK_SET() {stpio_set_pin(cfg.clk, 1);udelay(1);}
+#define VFD_CLK_CLR() {stpio_set_pin(cfg.clk, 0);udelay(4);}
+#define VFD_CLK_SET() {stpio_set_pin(cfg.clk, 1);udelay(4);}
 
 #define VFD_DATA_CLR() {stpio_set_pin(cfg.data, 0);}
 #define VFD_DATA_SET() {stpio_set_pin(cfg.data, 1);}
@@ -98,6 +98,8 @@ typedef struct
 
 #define FRONTPANEL_MINOR_RC             1
 #define LASTMINOR                 	    2
+//#define ENABLE_SCROLL
+//#define ENABLE_CLOCK_SECTION
 
 static tFrontPanelOpen FrontPanelOpen [LASTMINOR];
 
@@ -255,17 +257,17 @@ unsigned char ASCII[48][2] =
 	{0x48, 0x64},	//Z
 	/* A--Z  */
 
-	{0x01, 0x68},
-	{0x42, 0x01},
-	{0x10, 0x70},	//
-	{0x43, 0x09},	//
-	{0xE0, 0x00},	//
-	{0xEE, 0x07},	//
-	{0xE4, 0x02},	//
-	{0x50, 0x00},	//
-	{0xE0, 0x00},	//
-	{0x05, 0x00},	//
-	{0x48, 0x04},	//
+	{0x01, 0x68},   // [    1A
+	{0x42, 0x01},   // \    1B
+	{0x10, 0x70},   // ]    1C
+	{0x43, 0x09},   // |\   1D
+	{0x00, 0x40},   // _    1E
+	{0xEE, 0x07},   // *    1F
+	{0xE4, 0x02},   // +    20
+	{0x04, 0x00},   // .,   21
+	{0xE0, 0x00},   // -    22
+	{0x04, 0x00},   // ,,   23
+	{0x48, 0x04},   // /    24
 
 	{0x11, 0x78},	//
 	{0x44, 0x02},	//
@@ -408,7 +410,7 @@ static int VFD_Seg_Dig_Seg(unsigned char dignum, SegNum_T segnum, unsigned char 
 		VfdSegAddr[dignum].CurrValue2 = val ;
 	}
 	VFD_WR(addr);
-	udelay(5);
+	udelay(10);
 	VFD_WR(val);
 	VFD_CS_SET();
 	return  0;
@@ -674,7 +676,9 @@ void draw_thread(void *arg)
 		{
 			temp = draw_data.data[pos];
 
-			if (temp == 40 || temp == 41)
+			if (temp == '\n' || temp == 0)
+				break;
+			else if (temp == 40 || temp == 41)
 				temp = 32;
 			else if (temp >= 65 && temp <= 95)
 				temp = temp - 65;
@@ -741,7 +745,7 @@ void draw_thread(void *arg)
 		pos++;
 	}
 
-
+#if ENABLE_SCROLL // j00zek: disabled by default, interfere with GUI's
 	if (count > 8)
 	{
 		pos  = 0;
@@ -769,7 +773,7 @@ void draw_thread(void *arg)
 			pos++;
 		}
 	}
-
+#endif
 	if (count > 0)
 	{
 		k = 8;
@@ -790,14 +794,15 @@ void draw_thread(void *arg)
 
 int run_draw_thread(struct vfd_ioctl_data *draw_data)
 {
-	if (!thread_stop)
+	if (!thread_stop && thread)
 		kthread_stop(thread);
 
 	//wait thread stop
 	while (!thread_stop)
 	{
-		msleep(1);
+		msleep(5);
 	}
+	msleep(10);
 
 
 	thread_stop = 2;
@@ -806,7 +811,7 @@ int run_draw_thread(struct vfd_ioctl_data *draw_data)
 	//wait thread run
 	while (thread_stop == 2)
 	{
-		msleep(1);
+		msleep(5);
 	}
 
 	return 0;
@@ -1223,7 +1228,9 @@ static int PROTONdev_ioctl(struct inode *Inode, struct file *File, unsigned int 
 			break;
 		case VFDSETTIME:
 			//struct set_time_s *data2 = (struct set_time_s *) arg;
+#ifdef ENABLE_CLOCK_SECTION
 			res = protonSetTime((char *)arg);
+#endif
 			break;
 		case VFDGETTIME:
 			break;
@@ -1243,7 +1250,7 @@ static int PROTONdev_ioctl(struct inode *Inode, struct file *File, unsigned int 
 			}
 			else
 			{
-				//not suppoerted
+				//not supported
 			}
 
 			mode = 0;
@@ -1262,12 +1269,12 @@ static int PROTONdev_ioctl(struct inode *Inode, struct file *File, unsigned int 
 			//wait thread stop
 			while (!thread_stop)
 			{
-				msleep(1);
+				msleep(5);
 			}
 			VFD_CLR();
 			break;
 		default:
-			printk("VFD/Proton: unknown IOCTL 0x%x\n", cmd);
+			dprintk(1, "VFD/Proton: unknown IOCTL 0x%x\n", cmd);
 
 			mode = 0;
 			break;

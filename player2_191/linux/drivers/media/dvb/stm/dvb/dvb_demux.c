@@ -40,7 +40,7 @@ Date Modification Name
 #include <dvb_ca_en50221.h>
 #endif
 
-#include "dvb_demux.h" /* provides kernel demux types */
+#include <dvb_demux.h> /* provides kernel demux types */
 
 #include "dvb_module.h"
 #include "dvb_audio.h"
@@ -91,7 +91,11 @@ extern int reset_tsm;
 #if defined(ADB_BOX) \
  || defined(ARIVALINK200) \
  || defined(SAGEMCOM88) \
- || defined(SPARK7162)
+ || defined(SPARK7162) \
+ || defined(IPBOX9900) \
+ || defined(IPBOX99) \
+ || defined(IPBOX55) \
+ || defined(HL101)
 int (*StartFeed_)(struct dvb_demux_feed *Feed);
 int (*StopFeed_)(struct dvb_demux_feed *Feed);
 
@@ -103,6 +107,11 @@ void extern_startfeed_init(int(*StartFeed)(struct dvb_demux_feed *Feed), int(*St
 /* Sagemcom88 has 2 models with and without internal DVB-T. In both, DVB-T USB should be configured different way */
 #if defined(SAGEMCOM88)
 extern int hasdvbt;
+#endif
+
+#if defined(IPBOX9900) \
+ || defined(IPBOX99)
+extern int twinhead;
 #endif
 
 EXPORT_SYMBOL(extern_startfeed_init);
@@ -162,7 +171,9 @@ int StartFeed(struct dvb_demux_feed *Feed)
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StartFeed_ != NULL))
 			StartFeed_(Feed);
 	}
-#elif defined(ARIVALINK200)
+#elif defined(ARIVALINK200) \
+ || defined(IPBOX55) \
+ || defined(HL101)
 	if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StartFeed_ != NULL))
 		StartFeed_(Feed);
 #elif defined(SPARK7162)
@@ -179,14 +190,25 @@ int StartFeed(struct dvb_demux_feed *Feed)
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT3) && (StartFeed_ != NULL))
 			StartFeed_(Feed);
 	}
+#elif defined(IPBOX9900) \
+ || defined(IPBOX99)
+	if (twinhead == 1)
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StartFeed_ != NULL))
+			StartFeed_(Feed);
+	}
+	else
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StartFeed_ != NULL))
+			StartFeed_(Feed);
+	}
 #endif
 	/* <<< DVBT USB */
 #ifdef __TDT__
 #ifdef no_subtitles
 	if ((Feed->type == DMX_TYPE_TS) && (Feed->pes_type > DMX_TS_PES_OTHER))
 	{
-		DVB_DEBUG("pes_type %d > %d (OTHER)>\n", Feed->pes_type,
-			  DMX_TS_PES_OTHER);
+		DVB_DEBUG("pes_type %d > %d (OTHER)>\n", Feed->pes_type, DMX_TS_PES_OTHER);
 		return -EINVAL;
 	}
 #endif
@@ -379,7 +401,9 @@ int StopFeed(struct dvb_demux_feed *Feed)
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StopFeed_ != NULL))
 			StopFeed_(Feed);
 	}
-#elif defined(ARIVALINK200)
+#elif defined(ARIVALINK200) \
+ || defined(IPBOX55) \
+ || defined(HL101)
 	if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StopFeed_ != NULL))
 		StopFeed_(Feed);
 #elif defined(SPARK7162)
@@ -394,6 +418,18 @@ int StopFeed(struct dvb_demux_feed *Feed)
 	else if (hasdvbt == 1) //model with internal DVB-T (uhd88), our DVB-T USB will be available as fourth FE
 	{
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT3) && (StopFeed_ != NULL))
+			StopFeed_(Feed);
+	}
+#elif defined(IPBOX9900) \
+ || defined(IPBOX99)
+	if (twinhead == 1)
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StopFeed_ != NULL))
+			StopFeed_(Feed);
+	}
+	else
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StopFeed_ != NULL))
 			StopFeed_(Feed);
 	}
 #endif
@@ -520,7 +556,8 @@ int StopFeed(struct dvb_demux_feed *Feed)
 /* Uncomment the define to enable player decoupling from the DVB API.
  With this workaround packets sent to the player do not block the DVB API
  and do not cause the scheduling bug (waiting on buffers during spin_lock).
- However, there is a side effect - playback may disturb recordings. */
+ However, there is a side effect - playback may disturb recordings.
+*/
 #define DECOUPLE_PLAYER_FROM_DVBAPI
 #ifndef DECOUPLE_PLAYER_FROM_DVBAPI
 

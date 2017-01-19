@@ -135,7 +135,7 @@ static int ics_read_stats (char *buf, char **start, off_t offset,
 }
 
 /* Create the per CPU procfs entries */
-int __init ics_create_procfs (ICS_ULONG cpuMask)
+int __devinit ics_create_procfs (ICS_ULONG cpuMask)
 {
 	int i, res;
 	ICS_ULONG mask;
@@ -221,7 +221,7 @@ out:
 	return res;
 }
 
-void __exit ics_remove_procfs (ICS_ULONG cpuMask)
+void __devexit ics_remove_procfs (ICS_ULONG cpuMask)
 {
 	int i;
 	ICS_ULONG mask;

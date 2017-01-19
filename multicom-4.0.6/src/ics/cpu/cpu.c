@@ -214,8 +214,7 @@ void slaveResetRegMap ()
 #endif /* __arm__*/
 
 
-static
-void slaveReset (ICS_UINT index)
+static void slaveReset (ICS_UINT index)
 {
   /* Bypass CPU core reset out signals */
   {

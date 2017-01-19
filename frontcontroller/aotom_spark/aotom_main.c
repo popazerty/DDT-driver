@@ -38,6 +38,8 @@
 #include <linux/version.h>
 #include <linux/input.h>
 #include <linux/module.h>
+#include <linux/proc_fs.h>
+#include <linux/seq_file.h>
 #include <linux/delay.h>
 #include <linux/fs.h>
 #include <linux/kernel.h>
@@ -108,6 +110,23 @@ static int draw_thread_status = DRAW_THREAD_STATUS_STOPPED;
 
 int aotomSetIcon(int which, int on);
 int aotomSetLed(int which, int on);
+
+int vfdlen_open(struct inode *inode, struct  file *file) {
+  return single_open(file, vfdlen_show, NULL);
+}
+
+int vfdlen_show(struct seq_file *m, void *v) {
+  seq_printf(m, "%d\n", YWPANEL_width);
+  return 0;
+}
+
+static const struct file_operations vfdlen_fops = {
+  .owner = THIS_MODULE,
+  .open = vfdlen_open,
+  .read = seq_read,
+  .llseek = seq_lseek,
+  .release = single_release,
+};
 
 static void clear_display(void)
 {
@@ -1054,6 +1073,7 @@ static int __init aotom_init_module(void)
 		printk(KERN_ERR "%s platform_device_register_simple failed: %ld\n", __func__, PTR_ERR(rtc_pdev));
 	create_proc_fp();
 	dprintk(5, "%s <\n", __func__);
+	proc_create("vfdlen", 0, NULL, &vfdlen_fops);
 	return 0;
 }
 
@@ -1090,6 +1110,7 @@ static void __exit aotom_cleanup_module(void)
 	class_destroy(vfd_class);
 	unregister_chrdev(VFD_MAJOR, "VFD");
 	YWPANEL_VFD_Term();
+	remove_proc_entry("vfdlen", NULL);
 	printk("Fulan front panel module unloading\n");
 
 	remove_proc_fp();
