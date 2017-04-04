@@ -78,7 +78,7 @@ typedef struct H264ppState_s
 
 	boolean ForceWorkAroundGNBvd42331;
 	unsigned int last_mb_adaptive_frame_field_flag; // Copy of h264 variable
-
+	unsigned int last_entropy_coding_mode_flag;
 	unsigned int Accumulated_ITS;
 	unsigned int Resets; // Statistics - Number of times we have soft-reset
 } H264ppState_t;
@@ -137,7 +137,7 @@ OSDEV_RegisterPlatformDriverFn("h264pp", H264ppLoadModule, H264ppUnloadModule);
 static void H264ppInitializeDevice(void);
 static void H264ppQueueBufferToDevice(H264ppProcessBuffer_t *Buffer);
 static void H264ppWorkAroundGNBvd42331(H264ppState_t *State,
-				       unsigned int N);
+									   unsigned int N);
 
 // ////////////////////////////////////////////////////////////////////////////////
 //
@@ -395,7 +395,7 @@ static OSDEV_MmapEntrypoint(H264ppMmap)
 // The ioctl function to handle queuing of a buffer to the preprocessor
 
 static OSDEV_Status_t H264ppIoctlQueueBuffer(H264ppOpenContext_t *H264ppOpenContext,
-					     unsigned int ParameterAddress)
+											 unsigned int ParameterAddress)
 {
 	H264ppProcessBuffer_t *Record;
 	//
@@ -439,7 +439,7 @@ static OSDEV_Status_t H264ppIoctlQueueBuffer(H264ppOpenContext_t *H264ppOpenCont
 // The ioctl function to get a buffer that has been handled by the pre-processor
 
 static OSDEV_Status_t H264ppIoctlGetPreprocessedBuffer(H264ppOpenContext_t *H264ppOpenContext,
-						       unsigned int ParameterAddress)
+													   unsigned int ParameterAddress)
 {
 	h264pp_ioctl_dequeue_t Params;
 	H264ppProcessBuffer_t *Record;
@@ -531,6 +531,7 @@ static void H264ppInitializeDevice(void)
 		//
 		DeviceContext.PPState[N].ForceWorkAroundGNBvd42331 = true;
 		DeviceContext.PPState[N].last_mb_adaptive_frame_field_flag = 0; // Doesn't matter, will be initialized on first frame
+		DeviceContext.PPState[N].last_entropy_coding_mode_flag = 0; // Doesn't matter, will be initialized on first frame
 		//
 		// Perform soft reset
 		//
@@ -631,10 +632,10 @@ static void H264ppQueueBufferToDevice(H264ppProcessBuffer_t *Buffer)
 #endif
 	OSDEV_WriteLong(PP_ITS(N), 0xffffffff); // Clear interrupt status
 	OSDEV_WriteLong(PP_ITM(N), PP_ITM__BIT_BUFFER_OVERFLOW | // We are interested in every interrupt
-			PP_ITM__BIT_BUFFER_UNDERFLOW |
-			PP_ITM__INT_BUFFER_OVERFLOW |
-			PP_ITM__SRS_COMP |
-			PP_ITM__DMA_CMP);
+					PP_ITM__BIT_BUFFER_UNDERFLOW |
+					PP_ITM__INT_BUFFER_OVERFLOW |
+					PP_ITM__SRS_COMP |
+					PP_ITM__DMA_CMP);
 // Removed completion of error insertion PP_ITM__ERROR_BIT_INSERTED |
 // PP_ITM__ERROR_SC_DETECTED |
 	//
@@ -681,7 +682,7 @@ static unsigned char *GNBvd42331DataPhysicalAddress = NULL;
 //
 
 static void H264ppWorkAroundGNBvd42331(H264ppState_t *State,
-				       unsigned int N)
+									   unsigned int N)
 {
 	unsigned int i;
 	unsigned int mb_adaptive_frame_field_flag;
@@ -700,12 +701,14 @@ static void H264ppWorkAroundGNBvd42331(H264ppState_t *State,
 	mb_adaptive_frame_field_flag = ((State->BufferState->Parameters.Cfg & 1) != 0);
 	entropy_coding_mode_flag = ((State->BufferState->Parameters.Cfg & 2) != 0);
 	PerformWorkaround = !mb_adaptive_frame_field_flag &&
-			    State->last_mb_adaptive_frame_field_flag &&
-			    entropy_coding_mode_flag;
+						State->last_mb_adaptive_frame_field_flag &&
+						entropy_coding_mode_flag;
 	State->last_mb_adaptive_frame_field_flag = mb_adaptive_frame_field_flag;
-	if (!PerformWorkaround && !State->ForceWorkAroundGNBvd42331)
+	if (!PerformWorkaround && !State->ForceWorkAroundGNBvd42331 && entropy_coding_mode_flag == State->last_entropy_coding_mode_flag)
 		return;
 //OSDEV_Print( "H264ppWorkAroundGNBvd42331 - Deploying GNBvd42331 workaround block to PP %d - %08x.\n", N, State->BufferState->Parameters.Cfg );
+	//last entropy coding mode is the new one
+	State->last_entropy_coding_mode_flag = entropy_coding_mode_flag;
 	State->ForceWorkAroundGNBvd42331 = 0;
 	//
 	// we transfer the workaround stream to the output buffer (offset by 64k to not interfere with the output).

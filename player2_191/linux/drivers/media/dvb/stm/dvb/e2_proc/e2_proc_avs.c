@@ -32,9 +32,9 @@ struct stmfbio_output_configuration;
 
 extern struct snd_kcontrol **pseudoGetControls(int *numbers);
 extern int snd_pseudo_integer_get(struct snd_kcontrol *kcontrol,
-				  struct snd_ctl_elem_value *ucontrol);
+								  struct snd_ctl_elem_value *ucontrol);
 extern int snd_pseudo_integer_put(struct snd_kcontrol *kcontrol,
-				  struct snd_ctl_elem_value *ucontrol);
+								  struct snd_ctl_elem_value *ucontrol);
 extern int avs_command_kernel(unsigned int cmd, void *arg);
 
 extern int stmfb_set_output_configuration(struct stmfbio_output_configuration *c, struct stmfb_info *i);
@@ -134,7 +134,7 @@ static int current_volume = 31;
 static int current_e2_volume = 31;
 
 int proc_avs_0_volume_write(struct file *file, const char __user *buf,
-			    unsigned long count, void *data)
+							unsigned long count, void *data)
 {
 #define cMaxAttenuationE2 64
 	int logarithmicAttenuation[cMaxAttenuationE2] =
@@ -272,7 +272,7 @@ out:
 }
 
 int proc_avs_0_volume_read(char *page, char **start, off_t off, int count,
-			   int *eof, void *data_unused)
+						   int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -283,7 +283,7 @@ int proc_avs_0_volume_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_avs_0_input_choices_read(char *page, char **start, off_t off, int count,
-				  int *eof, void *data_unused)
+								  int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -294,7 +294,7 @@ int proc_avs_0_input_choices_read(char *page, char **start, off_t off, int count
 }
 
 int proc_avs_0_input_write(struct file *file, const char __user *buf,
-			   unsigned long count, void *data)
+						   unsigned long count, void *data)
 {
 	char *page;
 	char *myString;
@@ -370,7 +370,7 @@ out:
 }
 
 int proc_avs_0_input_read(char *page, char **start, off_t off, int count,
-			  int *eof, void *data_unused)
+						  int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -384,7 +384,7 @@ int proc_avs_0_input_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_avs_0_fb_write(struct file *file, const char __user *buf,
-			unsigned long count, void *data)
+						unsigned long count, void *data)
 {
 	char *page;
 	char *myString;
@@ -415,7 +415,7 @@ out:
 }
 
 int proc_avs_0_fb_read(char *page, char **start, off_t off, int count,
-		       int *eof, void *data_unused)
+					   int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -426,7 +426,7 @@ int proc_avs_0_fb_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_avs_0_colorformat_write(struct file *file, const char __user *buf,
-				 unsigned long count, void *data)
+								 unsigned long count, void *data)
 {
 	char *page;
 	char *myString;
@@ -565,7 +565,7 @@ out:
 }
 
 int proc_avs_0_colorformat_read(char *page, char **start, off_t off, int count,
-				int *eof, void *data_unused)
+								int *eof, void *data_unused)
 {
 	struct stmfb_info *info = stmfb_get_fbinfo_ptr();
 	struct stmfbio_output_configuration outputConfig;
@@ -595,7 +595,7 @@ int proc_avs_0_colorformat_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_avs_0_colorformat_choices_read(char *page, char **start, off_t off, int count,
-					int *eof, void *data_unused)
+										int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -606,7 +606,7 @@ int proc_avs_0_colorformat_choices_read(char *page, char **start, off_t off, int
 }
 
 int proc_avs_0_sb_write(struct file *file, const char __user *buf,
-			unsigned long count, void *data)
+						unsigned long count, void *data)
 {
 	char *page;
 	char *myString;
@@ -637,7 +637,7 @@ out:
 }
 
 int proc_avs_0_sb_read(char *page, char **start, off_t off, int count,
-		       int *eof, void *data_unused)
+					   int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -648,7 +648,7 @@ int proc_avs_0_sb_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_avs_0_standby_write(struct file *file, const char __user *buf,
-			     unsigned long count, void *data)
+							 unsigned long count, void *data)
 {
 	char *page;
 	char *myString;
@@ -688,7 +688,7 @@ out:
 }
 
 int proc_avs_0_standby_read(char *page, char **start, off_t off, int count,
-			    int *eof, void *data_unused)
+							int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -701,18 +701,18 @@ int proc_avs_0_standby_read(char *page, char **start, off_t off, int count,
 	return len;
 }
 
-int proc_video_hdmi_colorspace_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_video_hdmi_colorspace_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 #ifdef VERY_VERBOSE
 	printk("%s %ld - ", __FUNCTION__, count);
 #endif
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
-		struct stmfb_info* info = stmfb_get_fbinfo_ptr();
+		struct stmfb_info *info = stmfb_get_fbinfo_ptr();
 		struct stmfbio_output_configuration outputConfig;
 		int err = 0;
 		//int alpha = 0;
@@ -720,7 +720,7 @@ int proc_video_hdmi_colorspace_write(struct file* file, const char __user* buf, 
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 #ifdef VERY_VERBOSE
@@ -768,9 +768,9 @@ out:
 	return ret;
 }
 
-int proc_video_hdmi_colorspace_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_video_hdmi_colorspace_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
-	struct stmfb_info* info = stmfb_get_fbinfo_ptr();
+	struct stmfb_info *info = stmfb_get_fbinfo_ptr();
 	struct stmfbio_output_configuration outputConfig;
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -787,7 +787,7 @@ int proc_video_hdmi_colorspace_read(char* page, char** start, off_t off, int cou
 	return len;
 }
 
-int proc_video_hdmi_colorspace_choices_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_video_hdmi_colorspace_choices_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
