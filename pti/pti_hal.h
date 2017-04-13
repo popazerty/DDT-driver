@@ -22,4 +22,27 @@ extern int pti_hal_get_new_descrambler(int session_handle);
 extern int pti_hal_set_source(int session_handle, const int source);
 extern void paceSwtsByPti(void);
 
+// Extended dvbapi support
+
+#define CA_SET_DESCR_MODE  _IOW('o', 136, ca_descr_mode_t)
+
+enum ca_descr_algo {
+        CA_ALGO_DVBCSA,
+        CA_ALGO_DES,
+        CA_ALGO_AES128,
+};
+
+enum ca_descr_cipher_mode {
+        CA_MODE_ECB,
+        CA_MODE_CBC,
+};
+
+typedef struct ca_descr_mode {
+        uint32_t index;
+        enum ca_descr_algo algo;
+        enum ca_descr_cipher_mode cipher_mode;
+} ca_descr_mode_t;
+
+extern int pti_hal_descrambler_set_mode(int session_handle, int descrambler_handle, enum ca_descr_algo algo);
+
 #endif //_PTI_HAL_H_
