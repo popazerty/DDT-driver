@@ -463,7 +463,7 @@ static snd_pcm_uframes_t snd_card_pseudo_pcm_pointer(struct snd_pcm_substream *s
 static struct snd_pcm_hardware snd_card_pseudo_playback =
 {
 	.info = (SNDRV_PCM_INFO_MMAP | SNDRV_PCM_INFO_INTERLEAVED |
-	SNDRV_PCM_INFO_RESUME | SNDRV_PCM_INFO_MMAP_VALID),
+			 SNDRV_PCM_INFO_RESUME | SNDRV_PCM_INFO_MMAP_VALID),
 	.formats = USE_FORMATS,
 	.rates = USE_RATE,
 	.rate_min = USE_RATE_MIN,
